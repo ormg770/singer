@@ -1,9 +1,29 @@
 'use client'
 
+import { useEffect, useState } from 'react'
+import { useScrollReveal } from '../hooks/useScrollReveal'
+
 export default function AboutSection() {
+    const sectionRef = useScrollReveal<HTMLElement>(0.1)
+    const [settings, setSettings] = useState<Record<string, string>>({
+        bio_text: 'Born under a sky full of stars in the heart of New Orleans, Diana Mae found her voice in the space between silence and thunder. Her music weaves soul, dark pop, and cinematic soundscapes into something entirely her own.',
+        bio_text_2: 'After years of performing in intimate venues across the American South, Diana burst onto the global stage with her debut EP Midnight Veil in 2023, amassing over 50 million streams.',
+        stat_releases: '4',
+        stat_streams: '50M+',
+        stat_countries: '20+',
+        bio_title: 'A Voice That Commands the Dark',
+        bio_image: 'https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=700&q=85',
+    })
+
+    useEffect(() => {
+        fetch('/api/settings').then((r) => r.json()).then((data) => {
+            if (data && typeof data === 'object') setSettings((prev) => ({ ...prev, ...data }))
+        }).catch(() => { })
+    }, [])
     return (
         <section
             id="about"
+            ref={sectionRef}
             style={{
                 padding: '140px 0',
                 position: 'relative',
@@ -33,7 +53,7 @@ export default function AboutSection() {
                     className="about-grid"
                 >
                     {/* Photo side */}
-                    <div style={{ position: 'relative' }}>
+                    <div data-reveal className="reveal reveal-left" style={{ position: 'relative' }}>
                         {/* Decorative border */}
                         <div
                             style={{
@@ -54,7 +74,7 @@ export default function AboutSection() {
                             }}
                         >
                             <img
-                                src="https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=700&q=85"
+                                src={settings.bio_image || 'https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=700&q=85'}
                                 alt="Diana Mae"
                                 style={{
                                     width: '100%',
@@ -124,12 +144,17 @@ export default function AboutSection() {
                     </div>
 
                     {/* Text side */}
-                    <div>
+                    <div data-reveal className="reveal reveal-delay-2">
                         <div className="section-label">About Diana</div>
-                        <h2 className="section-title">
-                            A Voice That<br />
-                            <em>Commands the Dark</em>
-                        </h2>
+                        <h2
+                            className="section-title"
+                            style={{ whiteSpace: 'pre-wrap' }}
+                            dangerouslySetInnerHTML={{
+                                __html: settings.bio_title
+                                    ? settings.bio_title
+                                    : `A Voice That<br /><em>Commands the Dark</em>`
+                            }}
+                        />
                         <div className="divider" />
 
                         <p
@@ -140,10 +165,7 @@ export default function AboutSection() {
                                 marginBottom: '20px',
                             }}
                         >
-                            Born under a sky full of stars in the heart of New Orleans,{' '}
-                            <strong style={{ color: 'rgba(255,255,255,0.9)' }}>Diana Mae</strong> found her voice
-                            in the space between silence and thunder. Her music weaves soul, dark pop, and
-                            cinematic soundscapes into something entirely her own.
+                            {settings.bio_text}
                         </p>
 
                         <p
@@ -154,12 +176,7 @@ export default function AboutSection() {
                                 marginBottom: '40px',
                             }}
                         >
-                            After years of performing in intimate venues across the American South, Diana burst
-                            onto the global stage with her debut EP{' '}
-                            <em style={{ color: 'var(--accent-magenta)' }}>Midnight Veil</em> in 2023, amassing
-                            over 50 million streams. Her debut album{' '}
-                            <em style={{ color: 'var(--accent-magenta)' }}>Shadowless</em> cemented her as one of
-                            the most compelling voices of her generation.
+                            {settings.bio_text_2}
                         </p>
 
                         {/* Stats row */}
@@ -172,9 +189,9 @@ export default function AboutSection() {
                             }}
                         >
                             {[
-                                { value: '4', label: 'Releases' },
-                                { value: '50M+', label: 'Streams' },
-                                { value: '20+', label: 'Countries Toured' },
+                                { value: settings.stat_releases || '4', label: 'Releases' },
+                                { value: settings.stat_streams || '50M+', label: 'Streams' },
+                                { value: settings.stat_countries || '20+', label: 'Countries Toured' },
                             ].map((stat) => (
                                 <div
                                     key={stat.label}

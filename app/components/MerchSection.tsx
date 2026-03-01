@@ -1,30 +1,22 @@
 'use client'
 
-const merch = [
-    {
-        name: 'Shadowless Tour Tee',
-        price: '$35',
-        image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500&q=80',
-        badge: 'Best Seller',
-    },
-    {
-        name: 'Midnight Veil Hoodie',
-        price: '$65',
-        image: 'https://images.unsplash.com/photo-1556821840-3a63f15732ce?w=500&q=80',
-        badge: 'New',
-    },
-    {
-        name: 'Diana Mae Vinyl LP',
-        price: '$30',
-        image: 'https://images.unsplash.com/photo-1542621334-a254cf47733d?w=500&q=80',
-        badge: 'Limited',
-    },
-]
+import { useEffect, useState } from 'react'
+import { useScrollReveal } from '../hooks/useScrollReveal'
+import { Merch } from '@/lib/supabase'
 
 export default function MerchSection() {
+    const sectionRef = useScrollReveal<HTMLElement>(0.1)
+    const [merch, setMerch] = useState<Merch[]>([])
+
+    useEffect(() => {
+        fetch('/api/merch').then((r) => r.json()).then((data) => {
+            if (Array.isArray(data)) setMerch(data)
+        })
+    }, [])
     return (
         <section
             id="merch"
+            ref={sectionRef}
             style={{
                 padding: '140px 0',
                 position: 'relative',
@@ -42,7 +34,7 @@ export default function MerchSection() {
             />
 
             <div className="section-container">
-                <div style={{ textAlign: 'center', marginBottom: '60px' }}>
+                <div data-reveal className="reveal" style={{ textAlign: 'center', marginBottom: '60px' }}>
                     <div className="section-label">Official Store</div>
                     <h2 className="section-title">
                         Wear the <em>Music</em>
@@ -63,13 +55,13 @@ export default function MerchSection() {
                 >
                     {merch.map((item) => (
                         <div
-                            key={item.name}
+                            key={item.id}
                             className="glass-card glass-card-hover"
                             style={{ borderRadius: '20px', overflow: 'hidden' }}
                         >
                             <div style={{ position: 'relative', aspectRatio: '1', overflow: 'hidden' }}>
                                 <img
-                                    src={item.image}
+                                    src={item.image_url}
                                     alt={item.name}
                                     style={{
                                         width: '100%',
@@ -132,29 +124,42 @@ export default function MerchSection() {
                                         {item.price}
                                     </p>
                                 </div>
-                                <button
-                                    style={{
-                                        padding: '10px 18px',
-                                        borderRadius: '12px',
-                                        background: 'rgba(147,51,234,0.2)',
-                                        border: '1px solid rgba(147,51,234,0.35)',
-                                        color: 'var(--accent-purple)',
-                                        fontSize: '13px',
-                                        fontWeight: 600,
-                                        cursor: 'pointer',
-                                        transition: 'all 0.3s ease',
-                                    }}
-                                    onMouseEnter={(e) => {
-                                        e.currentTarget.style.background = 'rgba(147,51,234,0.4)'
-                                        e.currentTarget.style.color = 'white'
-                                    }}
-                                    onMouseLeave={(e) => {
-                                        e.currentTarget.style.background = 'rgba(147,51,234,0.2)'
-                                        e.currentTarget.style.color = 'var(--accent-purple)'
-                                    }}
-                                >
-                                    Shop
-                                </button>
+                                {item.store_url ? (
+                                    <a
+                                        href={item.store_url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        style={{
+                                            padding: '10px 18px',
+                                            borderRadius: '12px',
+                                            background: 'rgba(147,51,234,0.2)',
+                                            border: '1px solid rgba(147,51,234,0.35)',
+                                            color: 'var(--accent-purple)',
+                                            fontSize: '13px',
+                                            fontWeight: 600,
+                                            cursor: 'pointer',
+                                            textDecoration: 'none',
+                                            display: 'inline-block',
+                                        }}
+                                    >
+                                        Shop
+                                    </a>
+                                ) : (
+                                    <button
+                                        style={{
+                                            padding: '10px 18px',
+                                            borderRadius: '12px',
+                                            background: 'rgba(147,51,234,0.2)',
+                                            border: '1px solid rgba(147,51,234,0.35)',
+                                            color: 'var(--accent-purple)',
+                                            fontSize: '13px',
+                                            fontWeight: 600,
+                                            cursor: 'pointer',
+                                        }}
+                                    >
+                                        Shop
+                                    </button>
+                                )}
                             </div>
                         </div>
                     ))}

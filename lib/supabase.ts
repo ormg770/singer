@@ -40,3 +40,18 @@ export type Video = {
     thumbnail_url: string
     type: string
 }
+
+export type SiteSettings = {
+    key: string
+    value: string
+}
+
+export type Merch = {
+    id: string
+    name: string
+    price: string
+    image_url: string
+    badge: string
+    store_url: string
+    sort_order: number
+}

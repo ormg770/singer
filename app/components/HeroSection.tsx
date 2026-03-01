@@ -1,9 +1,22 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 export default function HeroSection() {
     const canvasRef = useRef<HTMLCanvasElement>(null)
+    const [settings, setSettings] = useState<Record<string, string>>({
+        hero_tagline: 'Singer · Songwriter · Performer',
+        hero_cta_primary_label: 'Listen Now',
+        hero_cta_primary_href: '#music',
+        hero_cta_secondary_label: 'View Tour Dates',
+        hero_cta_secondary_href: '#shows',
+    })
+
+    useEffect(() => {
+        fetch('/api/settings').then((r) => r.json()).then((data) => {
+            if (data && typeof data === 'object') setSettings((prev) => ({ ...prev, ...data }))
+        }).catch(() => { })
+    }, [])
 
     useEffect(() => {
         const canvas = canvasRef.current
@@ -99,7 +112,9 @@ export default function HeroSection() {
                 alignItems: 'center',
                 justifyContent: 'center',
                 overflow: 'hidden',
-                background: 'radial-gradient(ellipse at 50% 60%, #1a0830 0%, #0a0812 40%, #050508 100%)',
+                background: settings.hero_bg_image
+                    ? `linear-gradient(to bottom, rgba(10,8,18,0.7) 0%, rgba(5,5,8,1) 100%), url(${settings.hero_bg_image}) center/cover no-repeat`
+                    : 'radial-gradient(ellipse at 50% 60%, #1a0830 0%, #0a0812 40%, #050508 100%)',
             }}
         >
             {/* Particle canvas */}
@@ -213,7 +228,7 @@ export default function HeroSection() {
                         animation: 'fadeInUp 1s ease 0.7s forwards',
                     }}
                 >
-                    Singer · Songwriter · Performer
+                    {settings.hero_tagline || 'Singer · Songwriter · Performer'}
                 </p>
 
                 {/* CTAs */}
@@ -227,7 +242,7 @@ export default function HeroSection() {
                         animation: 'fadeInUp 1s ease 0.9s forwards',
                     }}
                 >
-                    <a href="#music" className="btn-primary">
+                    <a href={settings.hero_cta_primary_href || '#music'} className="btn-primary">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                             <path d="M8 5v14l11-7z" />
                         </svg>

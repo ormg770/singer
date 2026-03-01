@@ -2,10 +2,12 @@
 
 import { useEffect, useState } from 'react'
 import { Video } from '@/lib/supabase'
+import { useScrollReveal } from '../hooks/useScrollReveal'
 
 export default function VideoSection() {
     const [videos, setVideos] = useState<Video[]>([])
     const [activeVideo, setActiveVideo] = useState<string | null>(null)
+    const sectionRef = useScrollReveal<HTMLElement>(0.1)
 
     useEffect(() => {
         fetch('/api/videos')
@@ -16,6 +18,7 @@ export default function VideoSection() {
     return (
         <section
             id="videos"
+            ref={sectionRef}
             style={{
                 padding: '140px 0',
                 position: 'relative',
@@ -23,7 +26,7 @@ export default function VideoSection() {
             }}
         >
             <div className="section-container">
-                <div style={{ textAlign: 'center', marginBottom: '60px' }}>
+                <div data-reveal className="reveal" style={{ textAlign: 'center', marginBottom: '60px' }}>
                     <div className="section-label">Visuals</div>
                     <h2 className="section-title">
                         Watch & <em>Experience</em>

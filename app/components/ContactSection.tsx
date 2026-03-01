@@ -1,11 +1,13 @@
 'use client'
 
 import { useState } from 'react'
+import { useScrollReveal } from '../hooks/useScrollReveal'
 
 export default function ContactSection() {
     const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' })
     const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
     const [errorMsg, setErrorMsg] = useState('')
+    const sectionRef = useScrollReveal<HTMLElement>(0.1)
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         setForm({ ...form, [e.target.name]: e.target.value })
@@ -37,6 +39,7 @@ export default function ContactSection() {
     return (
         <section
             id="contact"
+            ref={sectionRef}
             style={{
                 padding: '140px 0',
                 position: 'relative',
@@ -65,7 +68,7 @@ export default function ContactSection() {
                     className="contact-grid"
                 >
                     {/* Left: Info */}
-                    <div>
+                    <div data-reveal className="reveal reveal-left">
                         <div className="section-label">Get In Touch</div>
                         <h2 className="section-title" style={{ marginBottom: '24px' }}>
                             Let&apos;s <em>Connect</em>
@@ -110,7 +113,7 @@ export default function ContactSection() {
                     </div>
 
                     {/* Right: Form */}
-                    <div>
+                    <div data-reveal className="reveal reveal-delay-2">
                         <div
                             className="glass-card"
                             style={{

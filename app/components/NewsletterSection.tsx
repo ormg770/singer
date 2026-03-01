@@ -1,12 +1,14 @@
 'use client'
 
 import { useState } from 'react'
+import { useScrollReveal } from '../hooks/useScrollReveal'
 
 export default function NewsletterSection() {
     const [email, setEmail] = useState('')
     const [name, setName] = useState('')
     const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
     const [message, setMessage] = useState('')
+    const sectionRef = useScrollReveal<HTMLElement>(0.15)
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -36,6 +38,7 @@ export default function NewsletterSection() {
     return (
         <section
             id="newsletter"
+            ref={sectionRef}
             style={{
                 padding: '120px 0',
                 position: 'relative',
@@ -73,100 +76,106 @@ export default function NewsletterSection() {
 
             <div className="section-container" style={{ position: 'relative', zIndex: 1 }}>
                 <div
-                    className="glass-card"
-                    style={{
-                        maxWidth: 600,
-                        margin: '0 auto',
-                        padding: '60px',
-                        borderRadius: '32px',
-                        textAlign: 'center',
-                        border: '1px solid rgba(147,51,234,0.2)',
-                    }}
+                    data-reveal
+                    className="reveal"
+                    style={{ maxWidth: 600, margin: '0 auto', textAlign: 'center' }}
                 >
-                    {/* Icon */}
                     <div
+                        className="glass-card"
                         style={{
-                            width: 64,
-                            height: 64,
-                            borderRadius: '50%',
-                            background: 'linear-gradient(135deg, #9333ea, #e040fb)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            margin: '0 auto 24px',
-                            fontSize: '28px',
-                            boxShadow: '0 0 30px rgba(147,51,234,0.4)',
+                            maxWidth: 600,
+                            margin: '0 auto',
+                            padding: '60px',
+                            borderRadius: '32px',
+                            textAlign: 'center',
+                            border: '1px solid rgba(147,51,234,0.2)',
                         }}
                     >
-                        ✉️
-                    </div>
-
-                    <div className="section-label" style={{ justifyContent: 'center' }}>
-                        Inner Circle
-                    </div>
-                    <h2
-                        className="section-title"
-                        style={{ fontSize: 'clamp(2rem, 4vw, 3.5rem)', marginBottom: '16px' }}
-                    >
-                        Stay <em>Connected</em>
-                    </h2>
-                    <p style={{ color: 'var(--text-secondary)', fontSize: 16, marginBottom: '36px' }}>
-                        Be the first to hear about new music, exclusive content, presale tickets, and
-                        behind-the-scenes moments. No spam — only magic.
-                    </p>
-
-                    {status === 'success' ? (
+                        {/* Icon */}
                         <div
                             style={{
-                                padding: '20px',
-                                borderRadius: '16px',
-                                background: 'rgba(29,185,84,0.1)',
-                                border: '1px solid rgba(29,185,84,0.25)',
-                                color: '#1db954',
-                                fontSize: '15px',
-                                fontWeight: 500,
+                                width: 64,
+                                height: 64,
+                                borderRadius: '50%',
+                                background: 'linear-gradient(135deg, #9333ea, #e040fb)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                margin: '0 auto 24px',
+                                fontSize: '28px',
+                                boxShadow: '0 0 30px rgba(147,51,234,0.4)',
                             }}
                         >
-                            {message}
+                            ✉️
                         </div>
-                    ) : (
-                        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-                            <input
-                                type="text"
-                                placeholder="Your first name"
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
-                                className="form-input"
-                            />
-                            <input
-                                type="email"
-                                placeholder="Your email address"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                required
-                                className="form-input"
-                            />
-                            {status === 'error' && (
-                                <p style={{ color: '#f43f5e', fontSize: '14px' }}>{message}</p>
-                            )}
-                            <button
-                                type="submit"
-                                disabled={status === 'loading'}
-                                className="btn-primary"
+
+                        <div className="section-label" style={{ justifyContent: 'center' }}>
+                            Inner Circle
+                        </div>
+                        <h2
+                            className="section-title"
+                            style={{ fontSize: 'clamp(2rem, 4vw, 3.5rem)', marginBottom: '16px' }}
+                        >
+                            Stay <em>Connected</em>
+                        </h2>
+                        <p style={{ color: 'var(--text-secondary)', fontSize: 16, marginBottom: '36px' }}>
+                            Be the first to hear about new music, exclusive content, presale tickets, and
+                            behind-the-scenes moments. No spam — only magic.
+                        </p>
+
+                        {status === 'success' ? (
+                            <div
                                 style={{
-                                    justifyContent: 'center',
-                                    opacity: status === 'loading' ? 0.7 : 1,
-                                    cursor: status === 'loading' ? 'wait' : 'pointer',
+                                    padding: '20px',
+                                    borderRadius: '16px',
+                                    background: 'rgba(29,185,84,0.1)',
+                                    border: '1px solid rgba(29,185,84,0.25)',
+                                    color: '#1db954',
+                                    fontSize: '15px',
+                                    fontWeight: 500,
                                 }}
                             >
-                                {status === 'loading' ? 'Subscribing...' : 'Join the Inner Circle'}
-                            </button>
-                        </form>
-                    )}
+                                {message}
+                            </div>
+                        ) : (
+                            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                                <input
+                                    type="text"
+                                    placeholder="Your first name"
+                                    value={name}
+                                    onChange={(e) => setName(e.target.value)}
+                                    className="form-input"
+                                />
+                                <input
+                                    type="email"
+                                    placeholder="Your email address"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    required
+                                    className="form-input"
+                                />
+                                {status === 'error' && (
+                                    <p style={{ color: '#f43f5e', fontSize: '14px' }}>{message}</p>
+                                )}
+                                <button
+                                    type="submit"
+                                    disabled={status === 'loading'}
+                                    className="btn-primary"
+                                    style={{
+                                        justifyContent: 'center',
+                                        opacity: status === 'loading' ? 0.7 : 1,
+                                        cursor: status === 'loading' ? 'wait' : 'pointer',
+                                    }}
+                                >
+                                    {status === 'loading' ? 'Subscribing...' : 'Join the Inner Circle'}
+                                </button>
+                            </form>
+                        )}
 
-                    <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '16px' }}>
-                        Unsubscribe anytime. Your privacy is respected.
-                    </p>
+                        <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '16px' }}>
+                            Unsubscribe anytime. Your privacy is respected.
+                        </p>
+                    </div>
                 </div>
             </div>
         </section>

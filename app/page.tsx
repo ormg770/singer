@@ -7,6 +7,7 @@ import ShowsSection from './components/ShowsSection'
 import GallerySection from './components/GallerySection'
 import MerchSection from './components/MerchSection'
 import NewsletterSection from './components/NewsletterSection'
+import DonationSection from './components/DonationSection'
 import ContactSection from './components/ContactSection'
 import Footer from './components/Footer'
 
@@ -22,6 +23,7 @@ export default function Home() {
       <GallerySection />
       <MerchSection />
       <NewsletterSection />
+      <DonationSection />
       <ContactSection />
       <Footer />
     </main>

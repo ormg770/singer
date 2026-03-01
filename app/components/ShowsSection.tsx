@@ -2,10 +2,12 @@
 
 import { useEffect, useState } from 'react'
 import { Show } from '@/lib/supabase'
+import { useScrollReveal } from '../hooks/useScrollReveal'
 
 export default function ShowsSection() {
     const [shows, setShows] = useState<Show[]>([])
     const [loading, setLoading] = useState(true)
+    const sectionRef = useScrollReveal<HTMLElement>(0.1)
 
     useEffect(() => {
         fetch('/api/shows')
@@ -36,6 +38,7 @@ export default function ShowsSection() {
     return (
         <section
             id="shows"
+            ref={sectionRef}
             style={{
                 padding: '140px 0',
                 position: 'relative',
@@ -54,7 +57,7 @@ export default function ShowsSection() {
             />
 
             <div className="section-container">
-                <div style={{ textAlign: 'center', marginBottom: '70px' }}>
+                <div data-reveal className="reveal" style={{ textAlign: 'center', marginBottom: '70px' }}>
                     <div className="section-label">Live Events</div>
                     <h2 className="section-title">
                         Tour <em>Dates</em>

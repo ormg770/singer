@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { GalleryItem } from '@/lib/supabase'
+import { useScrollReveal } from '../hooks/useScrollReveal'
 
 const categories = ['all', 'promo', 'live', 'studio']
 
@@ -9,6 +10,7 @@ export default function GallerySection() {
     const [items, setItems] = useState<GalleryItem[]>([])
     const [filter, setFilter] = useState('all')
     const [lightbox, setLightbox] = useState<GalleryItem | null>(null)
+    const sectionRef = useScrollReveal<HTMLElement>(0.1)
 
     useEffect(() => {
         fetch('/api/gallery')
@@ -21,6 +23,7 @@ export default function GallerySection() {
     return (
         <section
             id="gallery"
+            ref={sectionRef}
             style={{
                 padding: '140px 0',
                 position: 'relative',
@@ -39,7 +42,7 @@ export default function GallerySection() {
             />
 
             <div className="section-container">
-                <div style={{ textAlign: 'center', marginBottom: '60px' }}>
+                <div data-reveal className="reveal" style={{ textAlign: 'center', marginBottom: '60px' }}>
                     <div className="section-label">Gallery</div>
                     <h2 className="section-title">
                         Behind the <em>Lens</em>
