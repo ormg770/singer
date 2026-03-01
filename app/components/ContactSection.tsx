@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useScrollReveal } from '../hooks/useScrollReveal'
 
 export default function ContactSection() {
-    const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' })
+    const [form, setForm] = useState({ name: '', email: '', subject: '', message: '', bot_challenge: '' })
     const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
     const [errorMsg, setErrorMsg] = useState('')
     const sectionRef = useScrollReveal<HTMLElement>(0.1)
@@ -24,7 +24,7 @@ export default function ContactSection() {
             })
             if (res.ok) {
                 setStatus('success')
-                setForm({ name: '', email: '', subject: '', message: '' })
+                setForm({ name: '', email: '', subject: '', message: '', bot_challenge: '' })
             } else {
                 const data = await res.json()
                 setStatus('error')
@@ -179,6 +179,20 @@ export default function ContactSection() {
                                         </div>
                                     </div>
 
+                                    {/* Honeypot field (hidden from real users but visible to bots scanning the DOM) */}
+                                    <div style={{ position: 'absolute', opacity: 0, pointerEvents: 'none', zIndex: -1 }}>
+                                        <label htmlFor="bot_challenge" aria-hidden="true">Do not fill this out if you are human</label>
+                                        <input
+                                            type="text"
+                                            name="bot_challenge"
+                                            id="bot_challenge"
+                                            tabIndex={-1}
+                                            autoComplete="off"
+                                            value={form.bot_challenge}
+                                            onChange={handleChange}
+                                        />
+                                    </div>
+
                                     <div>
                                         <label style={{ fontSize: '12px', color: 'var(--text-muted)', letterSpacing: '0.08em', display: 'block', marginBottom: '6px' }}>
                                             SUBJECT
@@ -190,12 +204,12 @@ export default function ContactSection() {
                                             className="form-input"
                                             style={{ cursor: 'pointer' }}
                                         >
-                                            <option value="">Select a subject...</option>
-                                            <option value="Booking">Booking & Performances</option>
-                                            <option value="Press">Press & Media</option>
-                                            <option value="Collab">Collaboration</option>
-                                            <option value="Fan">Fan Message</option>
-                                            <option value="Other">Other</option>
+                                            <option value="" style={{ color: '#000' }}>Select a subject...</option>
+                                            <option value="Booking" style={{ color: '#000' }}>Booking & Performances</option>
+                                            <option value="Press" style={{ color: '#000' }}>Press & Media</option>
+                                            <option value="Collab" style={{ color: '#000' }}>Collaboration</option>
+                                            <option value="Fan" style={{ color: '#000' }}>Fan Message</option>
+                                            <option value="Other" style={{ color: '#000' }}>Other</option>
                                         </select>
                                     </div>
 
