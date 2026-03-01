@@ -24,6 +24,7 @@ export default function AdminMessagesPage() {
         try {
             const res = await fetch('/api/admin/messages', {
                 headers: { 'x-admin-token': token },
+                cache: 'no-store',
             })
             if (res.ok) {
                 const data = await res.json()
