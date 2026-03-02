@@ -71,10 +71,17 @@ export default function AdminMerchPage() {
     async function handleSaveSettings() {
         setSavingSettings(true)
         try {
+            // The API expects a flat Record<string, string> so we convert booleans to strings
+            const formattedSettings: Record<string, string> = {}
+            for (const key in settings) {
+                formattedSettings[key] = String(settings[key])
+            }
+
+            // The settings API uses PUT
             await fetch('/api/admin/settings', {
-                method: 'POST',
+                method: 'PUT',
                 headers: { 'Content-Type': 'application/json', 'x-admin-token': token! },
-                body: JSON.stringify({ settings })
+                body: JSON.stringify(formattedSettings)
             })
             alert('Settings saved successfully!')
         } catch (err) {
