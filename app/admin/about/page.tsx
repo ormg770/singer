@@ -109,6 +109,7 @@ export default function AdminAboutPage() {
                         {[
                             { key: 'bio_text', label: 'Biography — First Paragraph', rows: 5 },
                             { key: 'bio_text_2', label: 'Biography — Second Paragraph', rows: 5 },
+                            { key: 'bio_text_3', label: 'Biography — Third Paragraph (Optional)', rows: 5 },
                         ].map((f) => (
                             <div key={f.key}>
                                 <label
@@ -155,30 +156,49 @@ export default function AdminAboutPage() {
                             </label>
                             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
                                 {[
-                                    { key: 'stat_releases', label: 'Releases' },
-                                    { key: 'stat_streams', label: 'Streams' },
-                                    { key: 'stat_countries', label: 'Countries Toured' },
-                                ].map((s) => (
-                                    <div key={s.key}>
-                                        <label style={{ fontSize: '11px', color: 'rgba(255,255,255,0.35)', display: 'block', marginBottom: '6px' }}>
-                                            {s.label}
-                                        </label>
-                                        <input
-                                            type="text"
-                                            value={settings[s.key] ?? ''}
-                                            onChange={(e) => update(s.key, e.target.value)}
-                                            style={{
-                                                width: '100%',
-                                                padding: '10px 14px',
-                                                background: 'rgba(255,255,255,0.06)',
-                                                border: '1px solid rgba(255,255,255,0.1)',
-                                                borderRadius: '10px',
-                                                color: 'white',
-                                                fontSize: '14px',
-                                                outline: 'none',
-                                                boxSizing: 'border-box',
-                                            }}
-                                        />
+                                    { valueKey: 'stat_releases', labelKey: 'stat_label_1', defaultLabel: 'Releases' },
+                                    { valueKey: 'stat_streams', labelKey: 'stat_label_2', defaultLabel: 'Streams' },
+                                    { valueKey: 'stat_countries', labelKey: 'stat_label_3', defaultLabel: 'Countries Toured' },
+                                ].map((s, i) => (
+                                    <div key={`stat-${i}`} style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                        <div>
+                                            <label style={{ fontSize: '11px', color: 'rgba(255,255,255,0.35)', display: 'block', marginBottom: '6px' }}>Label</label>
+                                            <input
+                                                type="text"
+                                                value={settings[s.labelKey] ?? s.defaultLabel}
+                                                onChange={(e) => update(s.labelKey, e.target.value)}
+                                                style={{
+                                                    width: '100%',
+                                                    padding: '8px 12px',
+                                                    background: 'rgba(255,255,255,0.06)',
+                                                    border: '1px solid rgba(255,255,255,0.1)',
+                                                    borderRadius: '8px',
+                                                    color: 'white',
+                                                    fontSize: '13px',
+                                                    outline: 'none',
+                                                    boxSizing: 'border-box',
+                                                }}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label style={{ fontSize: '11px', color: 'rgba(255,255,255,0.35)', display: 'block', marginBottom: '6px' }}>Value ({s.defaultLabel})</label>
+                                            <input
+                                                type="text"
+                                                value={settings[s.valueKey] ?? ''}
+                                                onChange={(e) => update(s.valueKey, e.target.value)}
+                                                style={{
+                                                    width: '100%',
+                                                    padding: '10px 14px',
+                                                    background: 'rgba(255,255,255,0.06)',
+                                                    border: '1px solid rgba(255,255,255,0.1)',
+                                                    borderRadius: '10px',
+                                                    color: 'white',
+                                                    fontSize: '14px',
+                                                    outline: 'none',
+                                                    boxSizing: 'border-box',
+                                                }}
+                                            />
+                                        </div>
                                     </div>
                                 ))}
                             </div>
@@ -246,6 +266,6 @@ export default function AdminAboutPage() {
                     </form>
                 )}
             </div>
-        </AdminShell>
+        </AdminShell >
     )
 }

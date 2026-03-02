@@ -176,11 +176,24 @@ export default function AboutSection() {
                                 fontSize: '16px',
                                 color: 'rgba(255,255,255,0.55)',
                                 lineHeight: 1.85,
-                                marginBottom: '40px',
+                                marginBottom: settings.bio_text_3 ? '20px' : '40px',
                             }}
                         >
                             {settings.bio_text_2}
                         </p>
+
+                        {settings.bio_text_3 && (
+                            <p
+                                style={{
+                                    fontSize: '16px',
+                                    color: 'rgba(255,255,255,0.55)',
+                                    lineHeight: 1.85,
+                                    marginBottom: '40px',
+                                }}
+                            >
+                                {settings.bio_text_3}
+                            </p>
+                        )}
 
                         {/* Stats row */}
                         <div
@@ -192,12 +205,12 @@ export default function AboutSection() {
                             }}
                         >
                             {[
-                                { value: settings.stat_releases || '4', label: 'Releases' },
-                                { value: settings.stat_streams || '50M+', label: 'Streams' },
-                                { value: settings.stat_countries || '20+', label: 'Countries Toured' },
-                            ].map((stat) => (
+                                { value: settings.stat_releases || '4', label: settings.stat_label_1 || 'Releases' },
+                                { value: settings.stat_streams || '50M+', label: settings.stat_label_2 || 'Streams' },
+                                { value: settings.stat_countries || '20+', label: settings.stat_label_3 || 'Countries Toured' },
+                            ].map((stat, i) => (
                                 <div
-                                    key={stat.label}
+                                    key={`stat-${i}`}
                                     className="glass-card"
                                     style={{
                                         padding: '20px 16px',
