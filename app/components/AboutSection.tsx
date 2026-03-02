@@ -114,10 +114,10 @@ export default function AboutSection() {
                                         lineHeight: 1,
                                     }}
                                 >
-                                    2M+
+                                    {settings.bio_badge_primary_text || '2M+'}
                                 </div>
                                 <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginTop: '4px' }}>
-                                    Monthly Listeners
+                                    {settings.bio_badge_secondary_text || 'Monthly Listeners'}
                                 </div>
                             </div>
                         </div>

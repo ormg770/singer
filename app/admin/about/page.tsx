@@ -106,6 +106,52 @@ export default function AdminAboutPage() {
                             />
                         </div>
 
+                        <div>
+                            <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.45)', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '12px' }}>
+                                Photo Stats Badge (Bottom Left)
+                            </label>
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                                <div>
+                                    <label style={{ fontSize: '11px', color: 'rgba(255,255,255,0.35)', display: 'block', marginBottom: '6px' }}>Primary Text (e.g., 2M+)</label>
+                                    <input
+                                        type="text"
+                                        value={settings.bio_badge_primary_text ?? '2M+'}
+                                        onChange={(e) => update('bio_badge_primary_text', e.target.value)}
+                                        style={{
+                                            width: '100%',
+                                            padding: '10px 14px',
+                                            background: 'rgba(255,255,255,0.06)',
+                                            border: '1px solid rgba(255,255,255,0.1)',
+                                            borderRadius: '10px',
+                                            color: 'white',
+                                            fontSize: '14px',
+                                            outline: 'none',
+                                            boxSizing: 'border-box',
+                                        }}
+                                    />
+                                </div>
+                                <div>
+                                    <label style={{ fontSize: '11px', color: 'rgba(255,255,255,0.35)', display: 'block', marginBottom: '6px' }}>Secondary Text (e.g., Monthly Listeners)</label>
+                                    <input
+                                        type="text"
+                                        value={settings.bio_badge_secondary_text ?? 'Monthly Listeners'}
+                                        onChange={(e) => update('bio_badge_secondary_text', e.target.value)}
+                                        style={{
+                                            width: '100%',
+                                            padding: '10px 14px',
+                                            background: 'rgba(255,255,255,0.06)',
+                                            border: '1px solid rgba(255,255,255,0.1)',
+                                            borderRadius: '10px',
+                                            color: 'white',
+                                            fontSize: '14px',
+                                            outline: 'none',
+                                            boxSizing: 'border-box',
+                                        }}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
                         {[
                             { key: 'bio_text', label: 'Biography — First Paragraph', rows: 5 },
                             { key: 'bio_text_2', label: 'Biography — Second Paragraph', rows: 5 },
