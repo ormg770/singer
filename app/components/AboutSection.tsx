@@ -231,43 +231,45 @@ export default function AboutSection() {
                         {/* Socials */}
                         <div style={{ display: 'flex', gap: '14px', flexWrap: 'wrap' }}>
                             {[
-                                { name: 'Spotify', icon: '🎵', url: 'https://open.spotify.com' },
-                                { name: 'Instagram', icon: '📸', url: 'https://instagram.com' },
-                                { name: 'TikTok', icon: '🎬', url: 'https://tiktok.com' },
-                                { name: 'YouTube', icon: '▶️', url: 'https://youtube.com' },
-                            ].map((social) => (
-                                <a
-                                    key={social.name}
-                                    href={social.url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="glass-card"
-                                    style={{
-                                        display: 'inline-flex',
-                                        alignItems: 'center',
-                                        gap: '8px',
-                                        padding: '10px 16px',
-                                        borderRadius: '50px',
-                                        textDecoration: 'none',
-                                        color: 'rgba(255,255,255,0.8)',
-                                        fontSize: '13px',
-                                        fontWeight: 500,
-                                        transition: 'all 0.3s ease',
-                                        border: '1px solid rgba(255,255,255,0.08)',
-                                    }}
-                                    onMouseEnter={(e) => {
-                                        e.currentTarget.style.borderColor = 'rgba(224,64,251,0.4)'
-                                        e.currentTarget.style.color = 'white'
-                                    }}
-                                    onMouseLeave={(e) => {
-                                        e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'
-                                        e.currentTarget.style.color = 'rgba(255,255,255,0.8)'
-                                    }}
-                                >
-                                    <span>{social.icon}</span>
-                                    {social.name}
-                                </a>
-                            ))}
+                                { name: 'Spotify', icon: '🎵', url: settings.social_spotify },
+                                { name: 'Instagram', icon: '📸', url: settings.social_instagram },
+                                { name: 'TikTok', icon: '🎬', url: settings.social_tiktok },
+                                { name: 'YouTube', icon: '▶️', url: settings.social_youtube },
+                            ]
+                                .filter(social => !!social.url)
+                                .map((social) => (
+                                    <a
+                                        key={social.name}
+                                        href={social.url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="glass-card"
+                                        style={{
+                                            display: 'inline-flex',
+                                            alignItems: 'center',
+                                            gap: '8px',
+                                            padding: '10px 16px',
+                                            borderRadius: '50px',
+                                            textDecoration: 'none',
+                                            color: 'rgba(255,255,255,0.8)',
+                                            fontSize: '13px',
+                                            fontWeight: 500,
+                                            transition: 'all 0.3s ease',
+                                            border: '1px solid rgba(255,255,255,0.08)',
+                                        }}
+                                        onMouseEnter={(e) => {
+                                            e.currentTarget.style.borderColor = 'rgba(224,64,251,0.4)'
+                                            e.currentTarget.style.color = 'white'
+                                        }}
+                                        onMouseLeave={(e) => {
+                                            e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'
+                                            e.currentTarget.style.color = 'rgba(255,255,255,0.8)'
+                                        }}
+                                    >
+                                        <span>{social.icon}</span>
+                                        {social.name}
+                                    </a>
+                                ))}
                         </div>
                     </div>
                 </div>

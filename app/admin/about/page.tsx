@@ -162,6 +162,45 @@ export default function AdminAboutPage() {
                             </div>
                         </div>
 
+                        {/* Social Links */}
+                        <div>
+                            <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.45)', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '12px' }}>
+                                Social Media Links
+                            </label>
+                            <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.4)', marginBottom: '16px' }}>Leave a link blank to hide that button from the public site.</p>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px' }}>
+                                {[
+                                    { key: 'social_spotify', label: 'Spotify URL', icon: '🎵' },
+                                    { key: 'social_instagram', label: 'Instagram URL', icon: '📸' },
+                                    { key: 'social_tiktok', label: 'TikTok URL', icon: '🎬' },
+                                    { key: 'social_youtube', label: 'YouTube URL', icon: '▶️' },
+                                ].map((s) => (
+                                    <div key={s.key}>
+                                        <label style={{ fontSize: '11px', color: 'rgba(255,255,255,0.35)', display: 'block', marginBottom: '6px' }}>
+                                            {s.icon} {s.label}
+                                        </label>
+                                        <input
+                                            type="url"
+                                            placeholder={`https://...`}
+                                            value={settings[s.key] ?? ''}
+                                            onChange={(e) => update(s.key, e.target.value)}
+                                            style={{
+                                                width: '100%',
+                                                padding: '10px 14px',
+                                                background: 'rgba(255,255,255,0.06)',
+                                                border: '1px solid rgba(255,255,255,0.1)',
+                                                borderRadius: '10px',
+                                                color: 'white',
+                                                fontSize: '14px',
+                                                outline: 'none',
+                                                boxSizing: 'border-box',
+                                            }}
+                                        />
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
                         <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
                             <button
                                 type="submit"
