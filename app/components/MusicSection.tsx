@@ -144,26 +144,53 @@ export default function MusicSection() {
                                 <div
                                     key={release.id}
                                     className="glass-card glass-card-hover"
-                                    style={{ borderRadius: '20px', overflow: 'hidden' }}
+                                    style={{
+                                        borderRadius: '20px',
+                                        overflow: 'hidden',
+                                        transition: 'box-shadow 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        e.currentTarget.style.boxShadow = '0 30px 60px rgba(0,0,0,0.8)';
+                                        const img = e.currentTarget.querySelector('.release-cover') as HTMLElement;
+                                        const overlay = e.currentTarget.querySelector('.release-overlay') as HTMLElement;
+                                        if (img) img.style.transform = 'scale(1.03)';
+                                        if (overlay) overlay.style.opacity = '1';
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        e.currentTarget.style.boxShadow = '';
+                                        const img = e.currentTarget.querySelector('.release-cover') as HTMLElement;
+                                        const overlay = e.currentTarget.querySelector('.release-overlay') as HTMLElement;
+                                        if (img) img.style.transform = 'scale(1)';
+                                        if (overlay) overlay.style.opacity = '0';
+                                    }}
                                 >
                                     {/* Cover */}
                                     <div style={{ position: 'relative', aspectRatio: '1', overflow: 'hidden' }}>
                                         <img
                                             src={release.cover_url}
                                             alt={release.title}
+                                            className="release-cover"
                                             style={{
                                                 width: '100%',
                                                 height: '100%',
                                                 objectFit: 'cover',
-                                                transition: 'transform 0.6s ease',
+                                                transition: 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
                                             }}
-                                            onMouseEnter={(e) =>
-                                                (e.currentTarget.style.transform = 'scale(1.06)')
-                                            }
-                                            onMouseLeave={(e) =>
-                                                (e.currentTarget.style.transform = 'scale(1)')
-                                            }
                                         />
+
+                                        {/* Dark overlay on hover */}
+                                        <div
+                                            className="release-overlay"
+                                            style={{
+                                                position: 'absolute',
+                                                inset: 0,
+                                                background: 'rgba(0,0,0,0.4)',
+                                                opacity: 0,
+                                                transition: 'opacity 0.6s ease',
+                                                pointerEvents: 'none',
+                                            }}
+                                        />
+
                                         {/* Type badge */}
                                         <div
                                             style={{
@@ -183,38 +210,6 @@ export default function MusicSection() {
                                             }}
                                         >
                                             {release.badge || release.type}
-                                        </div>
-                                        {/* Play overlay */}
-                                        <div
-                                            style={{
-                                                position: 'absolute',
-                                                inset: 0,
-                                                background: 'rgba(0,0,0,0.4)',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'center',
-                                                opacity: 0,
-                                                transition: 'opacity 0.3s ease',
-                                            }}
-                                            onMouseEnter={(e) => (e.currentTarget.style.opacity = '1')}
-                                            onMouseLeave={(e) => (e.currentTarget.style.opacity = '0')}
-                                        >
-                                            <div
-                                                style={{
-                                                    width: 60,
-                                                    height: 60,
-                                                    borderRadius: '50%',
-                                                    background: 'rgba(224,64,251,0.9)',
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    justifyContent: 'center',
-                                                    boxShadow: '0 0 30px rgba(224,64,251,0.5)',
-                                                }}
-                                            >
-                                                <svg width="22" height="22" viewBox="0 0 24 24" fill="white">
-                                                    <path d="M8 5v14l11-7z" />
-                                                </svg>
-                                            </div>
                                         </div>
                                     </div>
 
@@ -237,15 +232,15 @@ export default function MusicSection() {
 
                                         {release.tagline && (
                                             <p style={{
-                                                fontSize: '14px',
-                                                color: 'rgba(255,255,255,0.7)',
+                                                fontSize: '13.5px',
+                                                color: 'rgba(255,255,255,0.45)',
                                                 fontStyle: 'italic',
                                                 lineHeight: 1.5,
-                                                marginBottom: '16px',
+                                                marginBottom: '18px',
                                                 borderLeft: '2px solid rgba(147, 51, 234, 0.4)',
                                                 paddingLeft: '12px'
                                             }}>
-                                                "{release.tagline}"
+                                                {release.tagline}
                                             </p>
                                         )}
 
