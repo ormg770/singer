@@ -34,6 +34,12 @@ export default function AdminMerchPage() {
     const [saving, setSaving] = useState(false)
     const [settings, setSettings] = useState<Record<string, string | boolean>>({})
     const [savingSettings, setSavingSettings] = useState(false)
+    const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
+
+    function showToast(message: string, type: 'success' | 'error' = 'success') {
+        setToast({ message, type })
+        setTimeout(() => setToast(null), 3000)
+    }
 
     async function load() {
         if (!token) return
@@ -83,10 +89,10 @@ export default function AdminMerchPage() {
                 headers: { 'Content-Type': 'application/json', 'x-admin-token': token! },
                 body: JSON.stringify(formattedSettings)
             })
-            alert('Settings saved successfully!')
+            showToast('Settings saved successfully!')
         } catch (err) {
             console.error('Failed to save settings:', err)
-            alert('Failed to save settings')
+            showToast('Failed to save settings', 'error')
         }
         setSavingSettings(false)
     }
@@ -213,6 +219,42 @@ export default function AdminMerchPage() {
                     </form>
                 </Modal>
             )}
+
+            {toast && (
+                <div
+                    style={{
+                        position: 'fixed',
+                        bottom: '32px',
+                        right: '32px',
+                        background: toast.type === 'success' ? '#10b981' : '#ef4444',
+                        color: 'white',
+                        padding: '16px 24px',
+                        borderRadius: '12px',
+                        boxShadow: '0 10px 40px rgba(0,0,0,0.5)',
+                        fontWeight: 500,
+                        fontSize: '14px',
+                        zIndex: 1000,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '12px',
+                        animation: 'toast-slide-up 0.3s ease forwards',
+                    }}
+                >
+                    {toast.type === 'success' ? (
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                    ) : (
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                    )}
+                    {toast.message}
+                </div>
+            )}
+            <style dangerouslySetInnerHTML={{
+                __html: `
+                @keyframes toast-slide-up {
+                    from { transform: translateY(100px); opacity: 0; }
+                    to { transform: translateY(0); opacity: 1; }
+                }
+            `}} />
         </AdminShell>
     )
 }
