@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useScrollReveal } from '../hooks/useScrollReveal'
 import { Icons } from './Icons'
+import AudioPlayer from './AudioPlayer'
 
 export default function AboutSection() {
     const sectionRef = useScrollReveal<HTMLElement>(0.1)
@@ -206,11 +207,19 @@ export default function AboutSection() {
                                 fontSize: '16px',
                                 color: 'rgba(255,255,255,0.55)',
                                 lineHeight: 1.85,
-                                marginBottom: settings.bio_text_3 ? '20px' : '40px',
+                                marginBottom: settings.audio_message_active === 'true' && settings.audio_message_url ? '10px' : (settings.bio_text_3 ? '20px' : '40px'),
                             }}
                         >
                             {settings.bio_text_2}
                         </p>
+
+                        {settings.audio_message_active === 'true' && settings.audio_message_url && (
+                            <AudioPlayer
+                                src={settings.audio_message_url}
+                                title={settings.audio_message_title}
+                                buttonText={settings.audio_message_btn}
+                            />
+                        )}
 
                         {settings.bio_text_3 && (
                             <p

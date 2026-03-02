@@ -20,9 +20,8 @@ export async function POST(req: NextRequest) {
         }
 
         // Validate file type
-        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif']
-        if (!allowedTypes.includes(file.type)) {
-            return NextResponse.json({ error: 'Only JPG, PNG, WebP, and GIF images are allowed' }, { status: 400 })
+        if (!file.type.startsWith('image/') && !file.type.startsWith('audio/') && !file.type.startsWith('video/')) {
+            return NextResponse.json({ error: 'Invalid file format. Received: ' + (file.type || 'unknown') }, { status: 400 })
         }
 
         // Validate file size (max 10MB)

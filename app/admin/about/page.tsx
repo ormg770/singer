@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import AdminShell from '../AdminShell'
 import { useAdminAuth } from '../../hooks/useAdminAuth'
 import ImageUploader from '../components/ImageUploader'
+import AudioUploader from '../components/AudioUploader'
 import { Icons } from '../../components/Icons'
 
 export default function AdminAboutPage() {
@@ -149,6 +150,82 @@ export default function AdminAboutPage() {
                                             boxSizing: 'border-box',
                                         }}
                                     />
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Audio Message */}
+                        <div style={{ marginTop: '24px', padding: '24px', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '16px' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                                <div>
+                                    <h3 style={{ fontSize: '15px', color: 'white', margin: '0 0 4px 0' }}>🎵 Artist Audio Message</h3>
+                                    <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.4)', margin: 0 }}>Add a personal voice note to the About section.</p>
+                                </div>
+                                <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
+                                    <div style={{ position: 'relative', width: '44px', height: '24px', background: settings.audio_message_active === 'true' ? '#1db954' : 'rgba(255,255,255,0.1)', borderRadius: '24px', transition: '0.3s' }}>
+                                        <div style={{ position: 'absolute', top: '2px', left: settings.audio_message_active === 'true' ? '22px' : '2px', width: '20px', height: '20px', background: 'white', borderRadius: '50%', transition: '0.3s' }} />
+                                    </div>
+                                    <input
+                                        type="checkbox"
+                                        checked={settings.audio_message_active === 'true'}
+                                        onChange={(e) => update('audio_message_active', e.target.checked ? 'true' : 'false')}
+                                        style={{ display: 'none' }}
+                                    />
+                                    <span style={{ fontSize: '13px', color: settings.audio_message_active === 'true' ? 'white' : 'rgba(255,255,255,0.4)', fontWeight: 500 }}>
+                                        {settings.audio_message_active === 'true' ? 'Active' : 'Inactive'}
+                                    </span>
+                                </label>
+                            </div>
+
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', opacity: settings.audio_message_active === 'true' ? 1 : 0.5, pointerEvents: settings.audio_message_active === 'true' ? 'auto' : 'none' }}>
+                                <AudioUploader
+                                    label="Audio File (MP3 / WAV)"
+                                    value={settings.audio_message_url ?? ''}
+                                    onChange={(url) => update('audio_message_url', url)}
+                                    token={token!}
+                                    folder="about"
+                                    hint="A subtle intimate greeting. Keep it compressed."
+                                />
+
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                                    <div>
+                                        <label style={{ fontSize: '11px', color: 'rgba(255,255,255,0.35)', display: 'block', marginBottom: '6px' }}>Message Title</label>
+                                        <input
+                                            type="text"
+                                            value={settings.audio_message_title ?? 'A Note From Diana'}
+                                            onChange={(e) => update('audio_message_title', e.target.value)}
+                                            style={{
+                                                width: '100%',
+                                                padding: '10px 14px',
+                                                background: 'rgba(255,255,255,0.06)',
+                                                border: '1px solid rgba(255,255,255,0.1)',
+                                                borderRadius: '10px',
+                                                color: 'white',
+                                                fontSize: '14px',
+                                                outline: 'none',
+                                                boxSizing: 'border-box',
+                                            }}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label style={{ fontSize: '11px', color: 'rgba(255,255,255,0.35)', display: 'block', marginBottom: '6px' }}>Button Text</label>
+                                        <input
+                                            type="text"
+                                            value={settings.audio_message_btn ?? 'Listen'}
+                                            onChange={(e) => update('audio_message_btn', e.target.value)}
+                                            style={{
+                                                width: '100%',
+                                                padding: '10px 14px',
+                                                background: 'rgba(255,255,255,0.06)',
+                                                border: '1px solid rgba(255,255,255,0.1)',
+                                                borderRadius: '10px',
+                                                color: 'white',
+                                                fontSize: '14px',
+                                                outline: 'none',
+                                                boxSizing: 'border-box',
+                                            }}
+                                        />
+                                    </div>
                                 </div>
                             </div>
                         </div>
