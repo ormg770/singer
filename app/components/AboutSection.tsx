@@ -93,30 +93,60 @@ export default function AboutSection() {
                                         'linear-gradient(to top, rgba(5,5,8,0.7) 0%, transparent 50%)',
                                 }}
                             />
-                            {/* Stat badge */}
+                        </div>
+                        <div
+                            data-reveal
+                            className="reveal reveal-delay-2"
+                            style={{
+                                position: 'absolute',
+                                left: '-20px',
+                                bottom: '-20px',
+                                background: 'rgba(255, 215, 0, 0.08)',
+                                backdropFilter: 'blur(20px)',
+                                padding: '16px 20px',
+                                borderRadius: '16px',
+                                border: '1px solid rgba(255, 215, 0, 0.25)',
+                                boxShadow: '0 20px 40px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255, 215, 0, 0.1)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '16px',
+                                zIndex: 10,
+                            }}
+                        >
                             <div
-                                className="glass-card"
                                 style={{
-                                    position: 'absolute',
-                                    bottom: '24px',
-                                    left: '24px',
-                                    padding: '16px 20px',
-                                    borderRadius: '16px',
-                                    backdropFilter: 'blur(16px)',
+                                    width: '48px',
+                                    height: '48px',
+                                    borderRadius: '50%',
+                                    background: 'linear-gradient(135deg, rgba(255, 215, 0, 0.2) 0%, rgba(255, 215, 0, 0.05) 100%)',
+                                    border: '1px solid rgba(255, 215, 0, 0.2)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
                                 }}
                             >
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFD700" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="9" cy="7" r="4"></circle>
+                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                </svg>
+                            </div>
+                            <div>
                                 <div
+                                    className="font-display"
                                     style={{
-                                        fontSize: '28px',
-                                        fontFamily: 'var(--font-display)',
+                                        fontSize: '24px',
                                         fontWeight: 600,
-                                        color: 'white',
+                                        backgroundImage: 'linear-gradient(135deg, #FFF6A9 0%, #DFB129 100%)',
+                                        WebkitBackgroundClip: 'text',
+                                        WebkitTextFillColor: 'transparent',
                                         lineHeight: 1,
                                     }}
                                 >
                                     {settings.bio_badge_primary_text || '2M+'}
                                 </div>
-                                <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginTop: '4px' }}>
+                                <div style={{ fontSize: '13px', color: 'rgba(255, 235, 150, 0.8)', marginTop: '4px', letterSpacing: '0.02em' }}>
                                     {settings.bio_badge_secondary_text || 'Monthly Listeners'}
                                 </div>
                             </div>
@@ -241,7 +271,7 @@ export default function AboutSection() {
                                             style={{
                                                 fontSize: '12px',
                                                 color: 'rgba(255,255,255,0.5)',
-                                                marginTop: '6px',
+                                                marginTop: '12px',
                                                 letterSpacing: '0.05em',
                                             }}
                                         >
