@@ -1,11 +1,13 @@
 'use client'
 
+import { Icons } from './Icons'
+
 const socials = [
-    { name: 'Spotify', icon: '🎵', url: 'https://open.spotify.com' },
-    { name: 'Instagram', icon: '📸', url: 'https://instagram.com' },
-    { name: 'TikTok', icon: '🎬', url: 'https://tiktok.com' },
-    { name: 'YouTube', icon: '▶️', url: 'https://youtube.com' },
-    { name: 'Twitter / X', icon: '✖️', url: 'https://twitter.com' },
+    { name: 'Spotify', icon: <Icons.Spotify style={{ width: 16, height: 16 }} />, url: 'https://open.spotify.com' },
+    { name: 'Instagram', icon: <Icons.Instagram style={{ width: 16, height: 16 }} />, url: 'https://instagram.com' },
+    { name: 'TikTok', icon: <Icons.TikTok style={{ width: 16, height: 16 }} />, url: 'https://tiktok.com' },
+    { name: 'YouTube', icon: <Icons.YouTube style={{ width: 16, height: 16 }} />, url: 'https://youtube.com' },
+    { name: 'Twitter / X', icon: <Icons.Twitter style={{ width: 16, height: 16 }} />, url: 'https://twitter.com' },
 ]
 
 const navLinks = [
@@ -145,7 +147,7 @@ export default function Footer() {
                                     onMouseEnter={(e) => (e.currentTarget.style.color = 'white')}
                                     onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(255,255,255,0.55)')}
                                 >
-                                    <span>{s.icon}</span>
+                                    <div style={{ display: 'flex', alignItems: 'center' }}>{s.icon}</div>
                                     {s.name}
                                 </a>
                             ))}

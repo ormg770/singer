@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useScrollReveal } from '../hooks/useScrollReveal'
+import { Icons } from './Icons'
 
 export default function ContactSection() {
     const [form, setForm] = useState({ name: '', email: '', subject: '', message: '', bot_challenge: '' })
@@ -81,9 +82,9 @@ export default function ContactSection() {
 
                         {/* Contact cards */}
                         {[
-                            { icon: '📮', label: 'General Inquiries', value: 'hello@dianamae.com' },
-                            { icon: '🎤', label: 'Booking & Press', value: 'booking@dianamae.com' },
-                            { icon: '💼', label: 'Management', value: 'mgmt@dianamae.com' },
+                            { icon: <Icons.Mail style={{ width: 22, height: 22 }} />, label: 'General Inquiries', value: 'hello@dianamae.com' },
+                            { icon: <Icons.Mic style={{ width: 22, height: 22 }} />, label: 'Booking & Press', value: 'booking@dianamae.com' },
+                            { icon: <Icons.Briefcase style={{ width: 22, height: 22 }} />, label: 'Management', value: 'mgmt@dianamae.com' },
                         ].map((item) => (
                             <div
                                 key={item.label}
@@ -101,7 +102,9 @@ export default function ContactSection() {
                                 onMouseEnter={(e) => (e.currentTarget.style.borderColor = 'rgba(147,51,234,0.3)')}
                                 onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)')}
                             >
-                                <div style={{ fontSize: '24px' }}>{item.icon}</div>
+                                <div style={{ display: 'flex', alignItems: 'center', color: 'var(--accent-magenta)' }}>
+                                    {item.icon}
+                                </div>
                                 <div>
                                     <div style={{ fontSize: '12px', color: 'var(--text-muted)', letterSpacing: '0.08em', marginBottom: '2px' }}>
                                         {item.label}

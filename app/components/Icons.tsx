@@ -39,4 +39,28 @@ export const Icons = {
             <path d="M12.008 5.626L7.697 9.94l4.311 4.318 4.314-4.318-4.314-4.314zm8.566 4.314L16.26 5.626l-4.252 4.256L7.697 5.626 3.385 9.94l4.312 4.318-4.312 4.315-4.312-4.314-4.311 4.314L3.385 18.89l4.312-4.315 4.311 4.315 4.314-4.315 4.314 4.315 4.314-4.315-4.314-4.315 4.314-4.318z" />
         </svg>
     ),
+    Twitter: (props: React.SVGProps<SVGSVGElement>) => (
+        <svg viewBox="0 0 24 24" fill="currentColor" {...props}>
+            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+        </svg>
+    ),
+    Mail: (props: React.SVGProps<SVGSVGElement>) => (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+            <rect width="20" height="16" x="2" y="4" rx="2" />
+            <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+        </svg>
+    ),
+    Mic: (props: React.SVGProps<SVGSVGElement>) => (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+            <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" />
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+            <line x1="12" x2="12" y1="19" y2="22" />
+        </svg>
+    ),
+    Briefcase: (props: React.SVGProps<SVGSVGElement>) => (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+            <rect width="20" height="14" x="2" y="7" rx="2" ry="2" />
+            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+        </svg>
+    )
 }
