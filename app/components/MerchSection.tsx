@@ -22,6 +22,8 @@ export default function MerchSection() {
                     if (item.key) map[item.key] = item.value
                 })
                 setSettings(map)
+            } else if (settingsData && typeof settingsData === 'object') {
+                setSettings(settingsData)
             }
         }).catch(err => console.error('Error fetching merch or settings:', err))
     }, [])
