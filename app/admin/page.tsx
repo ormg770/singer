@@ -63,6 +63,7 @@ export default function AdminDashboard() {
 
     const quickLinks = [
         { href: '/admin/messages', label: 'View Inbox', icon: '📬', desc: 'Read messages from fans and bookings' },
+        { href: '/admin/fans', label: 'Manage Fans', icon: '👥', desc: 'View and export newsletter subscribers' },
         { href: '/admin/hero', label: 'Edit Hero Section', icon: '🌟', desc: 'Change headline, tagline, and CTAs' },
         { href: '/admin/about', label: 'Edit Biography', icon: '📝', desc: 'Update bio text and stats' },
         { href: '/admin/releases', label: 'Manage Releases', icon: '🎵', desc: 'Add or edit albums, singles, EPs' },

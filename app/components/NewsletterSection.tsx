@@ -6,6 +6,7 @@ import { useScrollReveal } from '../hooks/useScrollReveal'
 export default function NewsletterSection() {
     const [email, setEmail] = useState('')
     const [name, setName] = useState('')
+    const [botChallenge, setBotChallenge] = useState('')
     const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
     const [message, setMessage] = useState('')
     const sectionRef = useScrollReveal<HTMLElement>(0.15)
@@ -17,13 +18,14 @@ export default function NewsletterSection() {
             const res = await fetch('/api/subscribe', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, name }),
+                body: JSON.stringify({ email, name, bot_challenge: botChallenge }),
             })
             if (res.ok) {
                 setStatus('success')
                 setMessage("You're on the list! Welcome to Diana's inner circle. 🎵")
                 setEmail('')
                 setName('')
+                setBotChallenge('')
             } else {
                 const data = await res.json()
                 setStatus('error')
@@ -139,6 +141,20 @@ export default function NewsletterSection() {
                             </div>
                         ) : (
                             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                                {/* Honeypot field (hidden from real users but visible to bots scanning the DOM) */}
+                                <div style={{ position: 'absolute', opacity: 0, pointerEvents: 'none', zIndex: -1 }}>
+                                    <label htmlFor="bot_challenge_newsletter" aria-hidden="true">Do not fill this out if you are human</label>
+                                    <input
+                                        type="text"
+                                        name="bot_challenge"
+                                        id="bot_challenge_newsletter"
+                                        tabIndex={-1}
+                                        autoComplete="off"
+                                        value={botChallenge}
+                                        onChange={(e) => setBotChallenge(e.target.value)}
+                                    />
+                                </div>
+
                                 <input
                                     type="text"
                                     placeholder="Your first name"

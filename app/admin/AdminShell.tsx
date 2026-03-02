@@ -7,6 +7,7 @@ import { useAdminAuth } from '../hooks/useAdminAuth'
 const navItems = [
     { href: '/admin', label: 'Dashboard', icon: '📊' },
     { href: '/admin/messages', label: 'Inbox', icon: '📬' },
+    { href: '/admin/fans', label: 'Fans', icon: '👥' },
     { href: '/admin/hero', label: 'Hero Section', icon: '🌟' },
     { href: '/admin/about', label: 'Biography', icon: '📝' },
     { href: '/admin/releases', label: 'Releases', icon: '🎵' },
