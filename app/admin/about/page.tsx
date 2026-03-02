@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import AdminShell from '../AdminShell'
 import { useAdminAuth } from '../../hooks/useAdminAuth'
 import ImageUploader from '../components/ImageUploader'
+import { Icons } from '../../components/Icons'
 
 export default function AdminAboutPage() {
     const { token } = useAdminAuth()
@@ -202,11 +203,11 @@ export default function AdminAboutPage() {
                             </label>
                             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
                                 {[
-                                    { valueKey: 'stat_releases', labelKey: 'stat_label_1', defaultLabel: 'Releases' },
-                                    { valueKey: 'stat_streams', labelKey: 'stat_label_2', defaultLabel: 'Streams' },
-                                    { valueKey: 'stat_countries', labelKey: 'stat_label_3', defaultLabel: 'Countries Toured' },
+                                    { valueKey: 'stat_releases', labelKey: 'stat_label_1', iconKey: 'stat_icon_1', defaultLabel: 'Releases' },
+                                    { valueKey: 'stat_streams', labelKey: 'stat_label_2', iconKey: 'stat_icon_2', defaultLabel: 'Streams' },
+                                    { valueKey: 'stat_countries', labelKey: 'stat_label_3', iconKey: 'stat_icon_3', defaultLabel: 'Countries Toured' },
                                 ].map((s, i) => (
-                                    <div key={`stat-${i}`} style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                    <div key={`stat-${i}`} style={{ display: 'flex', flexDirection: 'column', gap: '8px', background: 'rgba(255,255,255,0.02)', padding: '16px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
                                         <div>
                                             <label style={{ fontSize: '11px', color: 'rgba(255,255,255,0.35)', display: 'block', marginBottom: '6px' }}>Label</label>
                                             <input
@@ -227,7 +228,39 @@ export default function AdminAboutPage() {
                                             />
                                         </div>
                                         <div>
-                                            <label style={{ fontSize: '11px', color: 'rgba(255,255,255,0.35)', display: 'block', marginBottom: '6px' }}>Value ({s.defaultLabel})</label>
+                                            <label style={{ fontSize: '11px', color: 'rgba(255,255,255,0.35)', display: 'block', marginBottom: '6px' }}>Icon</label>
+                                            <div style={{ position: 'relative' }}>
+                                                <select
+                                                    value={settings[s.iconKey] || 'None'}
+                                                    onChange={(e) => update(s.iconKey, e.target.value)}
+                                                    style={{
+                                                        width: '100%',
+                                                        padding: '8px 12px',
+                                                        background: 'rgba(255,255,255,0.06)',
+                                                        border: '1px solid rgba(255,255,255,0.1)',
+                                                        borderRadius: '8px',
+                                                        color: 'white',
+                                                        fontSize: '13px',
+                                                        outline: 'none',
+                                                        boxSizing: 'border-box',
+                                                        appearance: 'none',
+                                                        cursor: 'pointer'
+                                                    }}
+                                                >
+                                                    <option value="None" style={{ color: '#000' }}>None</option>
+                                                    {Object.keys(Icons).map(iconName => (
+                                                        <option key={iconName} value={iconName} style={{ color: '#000' }}>
+                                                            {iconName}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                                <div style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: 'rgba(255,255,255,0.5)', fontSize: '10px' }}>
+                                                    ▼
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label style={{ fontSize: '11px', color: 'rgba(255,255,255,0.35)', display: 'block', marginBottom: '6px' }}>Value</label>
                                             <input
                                                 type="text"
                                                 value={settings[s.valueKey] ?? ''}

@@ -205,43 +205,51 @@ export default function AboutSection() {
                             }}
                         >
                             {[
-                                { value: settings.stat_releases || '4', label: settings.stat_label_1 || 'Releases' },
-                                { value: settings.stat_streams || '50M+', label: settings.stat_label_2 || 'Streams' },
-                                { value: settings.stat_countries || '20+', label: settings.stat_label_3 || 'Countries Toured' },
-                            ].map((stat, i) => (
-                                <div
-                                    key={`stat-${i}`}
-                                    className="glass-card"
-                                    style={{
-                                        padding: '20px 16px',
-                                        borderRadius: '16px',
-                                        textAlign: 'center',
-                                    }}
-                                >
+                                { value: settings.stat_releases ?? '24+', label: settings.stat_label_1 ?? 'Releases', icon: settings.stat_icon_1 },
+                                { value: settings.stat_streams ?? '5M+', label: settings.stat_label_2 ?? 'Streams', icon: settings.stat_icon_2 },
+                                { value: settings.stat_countries ?? '12', label: settings.stat_label_3 ?? 'Countries Toured', icon: settings.stat_icon_3 },
+                            ].map((stat, i) => {
+                                const IconComponent = stat.icon && stat.icon !== 'None' ? Icons[stat.icon as keyof typeof Icons] : null;
+                                return (
                                     <div
+                                        key={i}
+                                        className="glass-card stat-box"
                                         style={{
-                                            fontFamily: 'var(--font-display)',
-                                            fontSize: '2rem',
-                                            fontWeight: 600,
-                                            color: 'white',
-                                            lineHeight: 1,
-                                        }}
-                                        className="text-gradient"
-                                    >
-                                        {stat.value}
-                                    </div>
-                                    <div
-                                        style={{
-                                            fontSize: '12px',
-                                            color: 'rgba(255,255,255,0.5)',
-                                            marginTop: '6px',
-                                            letterSpacing: '0.05em',
+                                            padding: '20px 16px',
+                                            borderRadius: '16px',
+                                            textAlign: 'center',
                                         }}
                                     >
-                                        {stat.label}
+                                        {IconComponent && (
+                                            <div style={{ color: 'rgba(255,255,255,0.8)', marginBottom: '8px', width: '24px', height: '24px', margin: '0 auto 8px' }}>
+                                                <IconComponent />
+                                            </div>
+                                        )}
+                                        <div
+                                            style={{
+                                                fontFamily: 'var(--font-display)',
+                                                fontSize: '2rem',
+                                                fontWeight: 600,
+                                                color: 'white',
+                                                lineHeight: 1,
+                                            }}
+                                            className="text-gradient stat-value font-display"
+                                        >
+                                            {stat.value}
+                                        </div>
+                                        <div
+                                            style={{
+                                                fontSize: '12px',
+                                                color: 'rgba(255,255,255,0.5)',
+                                                marginTop: '6px',
+                                                letterSpacing: '0.05em',
+                                            }}
+                                        >
+                                            {stat.label}
+                                        </div>
                                     </div>
-                                </div>
-                            ))}
+                                )
+                            })}
                         </div>
 
                         {/* Socials */}

@@ -36,10 +36,16 @@ export default function DonationSection() {
     useEffect(() => {
         fetch('/api/settings')
             .then((res) => res.json())
-            .then((data: { key: string; value: string }[]) => {
-                const map: Record<string, string> = {}
-                data.forEach((item) => (map[item.key] = item.value))
-                setSettings((prev) => ({ ...prev, ...map }))
+            .then((data) => {
+                if (data && typeof data === 'object' && !Array.isArray(data)) {
+                    setSettings((prev) => ({ ...prev, ...data }))
+                } else if (Array.isArray(data)) {
+                    const map: Record<string, string> = {}
+                    data.forEach((item: any) => {
+                        if (item.key) map[item.key] = item.value
+                    })
+                    setSettings((prev) => ({ ...prev, ...map }))
+                }
             })
             .catch((err) => console.error('Error fetching settings:', err))
     }, [])
