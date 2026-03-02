@@ -32,13 +32,57 @@ export default function AdminMerchPage() {
     const [isNew, setIsNew] = useState(false)
     const [form, setForm] = useState(empty)
     const [saving, setSaving] = useState(false)
+    const [settings, setSettings] = useState<Record<string, string | boolean>>({})
+    const [savingSettings, setSavingSettings] = useState(false)
 
     async function load() {
         if (!token) return
-        const data = await fetch('/api/admin/merch', { headers: { 'x-admin-token': token } }).then((r) => r.json())
-        if (Array.isArray(data)) setItems(data)
+        try {
+            const [merchRes, settingsRes] = await Promise.all([
+                fetch('/api/admin/merch', { headers: { 'x-admin-token': token } }),
+                fetch('/api/settings')
+            ])
+            const merchData = await merchRes.json()
+            const settingsData = await settingsRes.json()
+
+            if (Array.isArray(merchData)) setItems(merchData)
+
+            if (settingsData && typeof settingsData === 'object' && !Array.isArray(settingsData)) {
+                setSettings(settingsData)
+            } else if (Array.isArray(settingsData)) {
+                const map: Record<string, string | boolean> = {}
+                settingsData.forEach((item: any) => {
+                    if (item.key) {
+                        map[item.key] = item.value === 'true' ? true : item.value === 'false' ? false : item.value
+                    }
+                })
+                setSettings(map)
+            }
+        } catch (err) {
+            console.error('Error loading data:', err)
+        }
     }
     useEffect(() => { load() }, [token])
+
+    function updateSetting(key: string, value: string | boolean) {
+        setSettings(prev => ({ ...prev, [key]: value }))
+    }
+
+    async function handleSaveSettings() {
+        setSavingSettings(true)
+        try {
+            await fetch('/api/admin/settings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'x-admin-token': token! },
+                body: JSON.stringify({ settings })
+            })
+            alert('Settings saved successfully!')
+        } catch (err) {
+            console.error('Failed to save settings:', err)
+            alert('Failed to save settings')
+        }
+        setSavingSettings(false)
+    }
 
     function openNew() { setForm(empty); setIsNew(true); setEditing(null) }
     function openEdit(item: Merch) { setForm({ name: item.name, price: item.price, image_url: item.image_url, badge: item.badge, store_url: item.store_url, sort_order: item.sort_order }); setEditing(item); setIsNew(false) }
@@ -62,11 +106,64 @@ export default function AdminMerchPage() {
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '32px' }}>
                 <div>
                     <h1 style={{ fontFamily: 'Georgia, serif', fontSize: '2rem', fontWeight: 400, color: 'white' }}>🛍️ Merch</h1>
-                    <p style={{ color: 'rgba(255,255,255,0.45)', fontSize: '14px', marginTop: '6px' }}>Manage merchandise items shown on the site</p>
+                    <p style={{ color: 'rgba(255,255,255,0.45)', fontSize: '14px', marginTop: '6px' }}>Manage store settings and merchandise items</p>
                 </div>
                 <button onClick={openNew} style={{ padding: '11px 24px', background: 'linear-gradient(135deg,#9333ea,#e040fb)', border: 'none', borderRadius: '10px', color: 'white', fontWeight: 600, fontSize: '14px', cursor: 'pointer' }}>+ Add Item</button>
             </div>
 
+            {/* General Settings */}
+            <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '16px', padding: '24px', marginBottom: '32px' }}>
+                <h2 style={{ fontSize: '18px', color: 'white', marginBottom: '20px', fontWeight: 500 }}>Section Settings</h2>
+
+                <div style={{ display: 'grid', gap: '16px', marginBottom: '24px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px', background: 'rgba(255,255,255,0.03)', borderRadius: '10px' }}>
+                        <div>
+                            <div style={{ color: 'white', fontWeight: 600, fontSize: '15px' }}>Coming Soon Mode</div>
+                            <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: '13px', marginTop: '4px' }}>Toggle this to hide all merch items and show the 'Coming Soon' message.</div>
+                        </div>
+                        <label style={{ position: 'relative', display: 'inline-block', width: '50px', height: '28px' }}>
+                            <input
+                                type="checkbox"
+                                checked={!!settings.merch_coming_soon}
+                                onChange={(e) => updateSetting('merch_coming_soon', e.target.checked)}
+                                style={{ opacity: 0, width: 0, height: 0 }}
+                            />
+                            <span style={{
+                                position: 'absolute', cursor: 'pointer', top: 0, left: 0, right: 0, bottom: 0,
+                                backgroundColor: settings.merch_coming_soon ? '#9333ea' : 'rgba(255,255,255,0.1)',
+                                transition: '.4s', borderRadius: '34px'
+                            }}>
+                                <span style={{
+                                    position: 'absolute', content: '""', height: '20px', width: '20px', left: '4px', bottom: '4px',
+                                    backgroundColor: 'white', transition: '.4s', borderRadius: '50%',
+                                    transform: settings.merch_coming_soon ? 'translateX(22px)' : 'translateX(0)'
+                                }} />
+                            </span>
+                        </label>
+                    </div>
+
+                    <div><label style={labelStyle()}>Section Title</label><input type="text" value={String(settings.merch_title ?? 'Wear the *Music*')} onChange={(e) => updateSetting('merch_title', e.target.value)} style={inputStyle()} /></div>
+
+                    <div><label style={labelStyle()}>Description</label><textarea rows={3} value={String(settings.merch_desc ?? "Official merchandise coming soon. Limited drops inspired by each era.")} onChange={(e) => updateSetting('merch_desc', e.target.value)} style={{ ...inputStyle(), resize: 'vertical' }} /></div>
+
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                        <div><label style={labelStyle()}>Button Text</label><input type="text" value={String(settings.merch_btn_text ?? 'Join for Early Access')} onChange={(e) => updateSetting('merch_btn_text', e.target.value)} style={inputStyle()} /></div>
+                        <div><label style={labelStyle()}>Button Store URL</label><input type="url" value={String(settings.merch_store_url ?? 'https://store.example.com')} onChange={(e) => updateSetting('merch_store_url', e.target.value)} style={inputStyle()} /></div>
+                    </div>
+                </div>
+
+                <div style={{ borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '20px', display: 'flex', justifyContent: 'flex-end' }}>
+                    <button
+                        onClick={handleSaveSettings}
+                        disabled={savingSettings}
+                        style={{ padding: '10px 24px', background: 'rgba(255,255,255,0.1)', border: 'none', borderRadius: '8px', color: 'white', fontWeight: 600, fontSize: '13px', cursor: 'pointer' }}
+                    >
+                        {savingSettings ? 'Saving...' : 'Save Settings'}
+                    </button>
+                </div>
+            </div>
+
+            <h2 style={{ fontSize: '18px', color: 'white', marginBottom: '16px', fontWeight: 500 }}>Merchandise Items</h2>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                 {items.map((item) => (
                     <div key={item.id} style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '16px 20px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '14px' }}>
