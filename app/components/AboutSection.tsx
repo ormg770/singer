@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useScrollReveal } from '../hooks/useScrollReveal'
+import { Icons } from './Icons'
 
 export default function AboutSection() {
     const sectionRef = useScrollReveal<HTMLElement>(0.1)
@@ -231,10 +232,10 @@ export default function AboutSection() {
                         {/* Socials */}
                         <div style={{ display: 'flex', gap: '14px', flexWrap: 'wrap' }}>
                             {[
-                                { name: 'Spotify', icon: '🎵', url: settings.social_spotify },
-                                { name: 'Instagram', icon: '📸', url: settings.social_instagram },
-                                { name: 'TikTok', icon: '🎬', url: settings.social_tiktok },
-                                { name: 'YouTube', icon: '▶️', url: settings.social_youtube },
+                                { name: 'Spotify', icon: <Icons.Spotify style={{ width: 16, height: 16 }} />, url: settings.social_spotify },
+                                { name: 'Instagram', icon: <Icons.Instagram style={{ width: 16, height: 16 }} />, url: settings.social_instagram },
+                                { name: 'TikTok', icon: <Icons.TikTok style={{ width: 16, height: 16 }} />, url: settings.social_tiktok },
+                                { name: 'YouTube', icon: <Icons.YouTube style={{ width: 16, height: 16 }} />, url: settings.social_youtube },
                             ]
                                 .filter(social => !!social.url)
                                 .map((social) => (
@@ -266,7 +267,7 @@ export default function AboutSection() {
                                             e.currentTarget.style.color = 'rgba(255,255,255,0.8)'
                                         }}
                                     >
-                                        <span>{social.icon}</span>
+                                        <div style={{ display: 'flex', alignItems: 'center' }}>{social.icon}</div>
                                         {social.name}
                                     </a>
                                 ))}

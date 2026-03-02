@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { Release } from '@/lib/supabase'
 import { useScrollReveal } from '../hooks/useScrollReveal'
+import { Icons } from './Icons'
 
 export default function MusicSection() {
     const [releases, setReleases] = useState<Release[]>([])
@@ -27,12 +28,12 @@ export default function MusicSection() {
         ep: '#f5c842',
     }
 
-    const platformConfig: Record<string, { label: string; icon: string; bg: string; border: string; color: string }> = {
-        apple_music: { label: 'Apple', icon: '🍎', bg: 'rgba(252, 60, 74, 0.1)', border: 'rgba(252,60,74,0.2)', color: '#fc3c4a' },
-        amazon: { label: 'Amazon', icon: '🛒', bg: 'rgba(0, 168, 225, 0.1)', border: 'rgba(0,168,225,0.2)', color: '#00A8E1' },
-        youtube: { label: 'YouTube', icon: '▶️', bg: 'rgba(255, 0, 0, 0.1)', border: 'rgba(255,0,0,0.2)', color: '#FF0000' },
-        deezer: { label: 'Deezer', icon: '🎵', bg: 'rgba(239, 84, 102, 0.1)', border: 'rgba(239,84,102,0.2)', color: '#EF5466' },
-        soundcloud: { label: 'Soundcloud', icon: '☁️', bg: 'rgba(255, 85, 0, 0.1)', border: 'rgba(255,85,0,0.2)', color: '#FF5500' },
+    const platformConfig: Record<string, { label: string; icon: React.ReactNode; bg: string; border: string; color: string }> = {
+        apple_music: { label: 'Apple Music', icon: <Icons.Apple style={{ width: 14, height: 14 }} />, bg: 'rgba(252, 60, 74, 0.1)', border: 'rgba(252,60,74,0.2)', color: '#fc3c4a' },
+        amazon: { label: 'Amazon', icon: <Icons.Amazon style={{ width: 14, height: 14 }} />, bg: 'rgba(0, 168, 225, 0.1)', border: 'rgba(0,168,225,0.2)', color: '#00A8E1' },
+        youtube: { label: 'YouTube', icon: <Icons.YouTube style={{ width: 14, height: 14 }} />, bg: 'rgba(255, 0, 0, 0.1)', border: 'rgba(255,0,0,0.2)', color: '#FF0000' },
+        tidal: { label: 'Tidal', icon: <Icons.Tidal style={{ width: 14, height: 14 }} />, bg: 'rgba(255, 255, 255, 0.1)', border: 'rgba(255,255,255,0.2)', color: '#FFFFFF' },
+        soundcloud: { label: 'Soundcloud', icon: <Icons.SoundCloud style={{ width: 14, height: 14 }} />, bg: 'rgba(255, 85, 0, 0.1)', border: 'rgba(255,85,0,0.2)', color: '#FF5500' },
     }
 
     // Safely parse platform data
@@ -243,9 +244,13 @@ export default function MusicSection() {
                                                     textDecoration: 'none',
                                                     transition: 'all 0.3s ease',
                                                     letterSpacing: '0.05em',
+                                                    display: 'inline-flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    gap: '6px'
                                                 }}
                                             >
-                                                🎵 Spotify
+                                                <Icons.Spotify style={{ width: 14, height: 14 }} /> Spotify
                                             </a>
                                             <a
                                                 href={pData.url}
@@ -264,6 +269,10 @@ export default function MusicSection() {
                                                     textDecoration: 'none',
                                                     transition: 'all 0.3s ease',
                                                     letterSpacing: '0.05em',
+                                                    display: 'inline-flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    gap: '6px'
                                                 }}
                                             >
                                                 {pConfig.icon} {pConfig.label}
