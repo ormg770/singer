@@ -74,6 +74,28 @@ export default function AdminAboutPage() {
                         </div>
 
                         <div>
+                            <label style={{ display: 'block', fontSize: '12px', color: 'rgba(255,255,255,0.45)', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '8px' }}>
+                                Floating Badge Text (Under Photo)
+                            </label>
+                            <input
+                                type="text"
+                                value={settings.bio_badge_text ?? 'Since 2019'}
+                                onChange={(e) => update('bio_badge_text', e.target.value)}
+                                style={{
+                                    width: '100%',
+                                    padding: '12px 16px',
+                                    background: 'rgba(255,255,255,0.06)',
+                                    border: '1px solid rgba(255,255,255,0.1)',
+                                    borderRadius: '10px',
+                                    color: 'white',
+                                    fontSize: '14px',
+                                    outline: 'none',
+                                    boxSizing: 'border-box',
+                                }}
+                            />
+                        </div>
+
+                        <div>
                             <ImageUploader
                                 label="Biography Image"
                                 value={settings.bio_image ?? ''}

@@ -137,9 +137,11 @@ export default function AboutSection() {
                                 border: '1px solid rgba(224, 64, 251, 0.25)',
                             }}
                         >
-                            <div style={{ fontSize: '24px' }}>🎵</div>
+                            <div style={{ display: 'flex', color: 'var(--accent-magenta)' }}>
+                                <Icons.MusicNote style={{ width: 24, height: 24 }} />
+                            </div>
                             <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.7)', marginTop: '4px', letterSpacing: '0.05em' }}>
-                                Since 2019
+                                {settings.bio_badge_text || 'Since 2019'}
                             </div>
                         </div>
                     </div>
