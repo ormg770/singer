@@ -13,6 +13,8 @@ const empty: Omit<Release, 'id'> = {
     release_date: '',
     spotify_url: '',
     apple_music_url: JSON.stringify({ platform: 'apple_music', url: '' }),
+    tagline: '',
+    badge: ''
 }
 
 function Modal({ title, children, onClose }: { title: string; children: React.ReactNode; onClose: () => void }) {
@@ -62,6 +64,8 @@ export default function AdminReleasesPage() {
     const [isNew, setIsNew] = useState(false)
     const [form, setForm] = useState<Omit<Release, 'id'>>(empty)
     const [saving, setSaving] = useState(false)
+    const [settings, setSettings] = useState<Record<string, string>>({})
+    const [savingSettings, setSavingSettings] = useState(false)
 
     // Helper to safely parse platform info from apple_music_url
     function getPlatformData(str: string | null) {
@@ -78,12 +82,17 @@ export default function AdminReleasesPage() {
     async function load() {
         const data = await fetch('/api/releases').then((r) => r.json())
         if (Array.isArray(data)) setReleases(data)
+
+        const sData = await fetch('/api/settings').then((r) => r.json())
+        if (sData && typeof sData === 'object' && !Array.isArray(sData)) {
+            setSettings(sData)
+        }
     }
 
     useEffect(() => { if (token) load() }, [token])
 
     function openNew() { setForm(empty); setIsNew(true); setEditing(null) }
-    function openEdit(r: Release) { setForm({ title: r.title, type: r.type, cover_url: r.cover_url, release_date: r.release_date, spotify_url: r.spotify_url, apple_music_url: r.apple_music_url }); setEditing(r); setIsNew(false) }
+    function openEdit(r: Release) { setForm({ title: r.title, type: r.type, cover_url: r.cover_url, release_date: r.release_date, spotify_url: r.spotify_url, apple_music_url: r.apple_music_url, tagline: r.tagline || '', badge: r.badge || '' }); setEditing(r); setIsNew(false) }
     function closeModal() { setEditing(null); setIsNew(false) }
 
     async function handleSave(e: React.FormEvent) {
@@ -96,6 +105,18 @@ export default function AdminReleasesPage() {
         }
         setSaving(false)
         closeModal()
+        load()
+    }
+
+    async function handleSaveSettings(e: React.FormEvent) {
+        e.preventDefault()
+        setSavingSettings(true)
+        await fetch('/api/admin/settings', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json', 'x-admin-token': token! },
+            body: JSON.stringify(settings)
+        })
+        setSavingSettings(false)
         load()
     }
 
@@ -115,6 +136,23 @@ export default function AdminReleasesPage() {
                 <button onClick={openNew} style={{ padding: '11px 24px', background: 'linear-gradient(135deg,#9333ea,#e040fb)', border: 'none', borderRadius: '10px', color: 'white', fontWeight: 600, fontSize: '14px', cursor: 'pointer' }}>
                     + Add Release
                 </button>
+            </div>
+
+            <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '16px', padding: '24px', marginBottom: '32px' }}>
+                <h2 style={{ fontSize: '1.2rem', color: 'white', marginBottom: '16px', fontWeight: 500 }}>Global Section Settings</h2>
+                <form onSubmit={handleSaveSettings} style={{ display: 'flex', flexDirection: 'column', gap: '16px', maxWidth: '600px' }}>
+                    <div>
+                        <label style={labelStyle()}>Section Title</label>
+                        <input type="text" value={settings.music_title || ''} onChange={(e) => setSettings({ ...settings, music_title: e.target.value })} placeholder="The Music" style={inputStyle()} />
+                    </div>
+                    <div>
+                        <label style={labelStyle()}>Section Description</label>
+                        <textarea value={settings.music_desc || ''} onChange={(e) => setSettings({ ...settings, music_desc: e.target.value })} placeholder="From debut singles to full-length albums..." style={{ ...inputStyle(), minHeight: '80px', resize: 'vertical' }} />
+                    </div>
+                    <button type="submit" disabled={savingSettings} style={{ alignSelf: 'flex-start', padding: '10px 20px', background: 'rgba(255,255,255,0.1)', border: 'none', borderRadius: '8px', color: 'white', cursor: 'pointer', fontSize: '13px' }}>
+                        {savingSettings ? 'Saving...' : 'Save Settings'}
+                    </button>
+                </form>
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
@@ -143,6 +181,8 @@ export default function AdminReleasesPage() {
                                 { key: 'title', label: 'Title', type: 'text', required: true },
                                 { key: 'cover_url', label: 'Cover Image', type: 'image', hint: 'Square (1:1), min 800x800px' },
                                 { key: 'release_date', label: 'Release Date', type: 'date', required: false },
+                                { key: 'tagline', label: 'Tagline (Editorial Description)', type: 'text', required: false, placeholder: 'e.g. An intimate reflection on distance...' },
+                                { key: 'badge', label: 'Custom Badge', type: 'text', required: false, placeholder: 'e.g. SINGLE • 2025' },
                                 { key: 'spotify_url', label: 'Spotify URL', type: 'url', required: false },
                             ] as const).map((f) => (
                                 <div key={f.key}>
@@ -158,7 +198,7 @@ export default function AdminReleasesPage() {
                                     ) : (
                                         <>
                                             <label style={labelStyle()}>{f.label}</label>
-                                            <input type={f.type} value={(form as any)[f.key]} onChange={(e) => setForm({ ...form, [f.key]: e.target.value })} required={f.required} style={inputStyle()} />
+                                            <input type={f.type} value={(form as any)[f.key]} onChange={(e) => setForm({ ...form, [f.key]: e.target.value })} placeholder={(f as any).placeholder} required={f.required} style={inputStyle()} />
                                         </>
                                     )}
                                 </div>

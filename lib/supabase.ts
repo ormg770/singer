@@ -13,6 +13,8 @@ export type Release = {
     release_date: string
     spotify_url: string
     apple_music_url: string
+    tagline?: string
+    badge?: string
 }
 
 export type Show = {

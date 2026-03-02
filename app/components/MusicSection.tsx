@@ -7,6 +7,7 @@ import { Icons } from './Icons'
 
 export default function MusicSection() {
     const [releases, setReleases] = useState<Release[]>([])
+    const [settings, setSettings] = useState<Record<string, string>>({})
     const [filter, setFilter] = useState<'all' | 'album' | 'single' | 'ep'>('all')
     const [loading, setLoading] = useState(true)
     const sectionRef = useScrollReveal<HTMLElement>(0.1)
@@ -15,7 +16,15 @@ export default function MusicSection() {
         fetch('/api/releases')
             .then((r) => r.json())
             .then((data) => {
-                setReleases(data)
+                if (Array.isArray(data)) setReleases(data)
+            })
+
+        fetch('/api/settings')
+            .then((r) => r.json())
+            .then((sData) => {
+                if (sData && typeof sData === 'object' && !Array.isArray(sData)) {
+                    setSettings(sData)
+                }
                 setLoading(false)
             })
     }, [])
@@ -74,11 +83,11 @@ export default function MusicSection() {
                 <div data-reveal className="reveal" style={{ textAlign: 'center', marginBottom: '60px' }}>
                     <div className="section-label">Discography</div>
                     <h2 className="section-title">
-                        The <em>Music</em>
+                        {settings.music_title || <>The <em>Music</em></>}
                     </h2>
                     <div className="divider" style={{ margin: '24px auto' }} />
                     <p style={{ color: 'var(--text-secondary)', maxWidth: 500, margin: '0 auto', fontSize: 16 }}>
-                        From debut singles to full-length albums — every release is a world to get lost in.
+                        {settings.music_desc || 'From debut singles to full-length albums — every release is a world to get lost in.'}
                     </p>
 
                     {/* Filter tabs */}
@@ -173,7 +182,7 @@ export default function MusicSection() {
                                                 backdropFilter: 'blur(10px)',
                                             }}
                                         >
-                                            {release.type}
+                                            {release.badge || release.type}
                                         </div>
                                         {/* Play overlay */}
                                         <div
@@ -222,9 +231,23 @@ export default function MusicSection() {
                                         >
                                             {release.title}
                                         </h3>
-                                        <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '16px' }}>
+                                        <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: release.tagline ? '8px' : '16px' }}>
                                             {new Date(release.release_date).getFullYear()}
                                         </p>
+
+                                        {release.tagline && (
+                                            <p style={{
+                                                fontSize: '14px',
+                                                color: 'rgba(255,255,255,0.7)',
+                                                fontStyle: 'italic',
+                                                lineHeight: 1.5,
+                                                marginBottom: '16px',
+                                                borderLeft: '2px solid rgba(147, 51, 234, 0.4)',
+                                                paddingLeft: '12px'
+                                            }}>
+                                                "{release.tagline}"
+                                            </p>
+                                        )}
 
                                         <div style={{ display: 'flex', gap: '10px' }}>
                                             <a
