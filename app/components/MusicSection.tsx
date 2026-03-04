@@ -137,17 +137,18 @@ export default function MusicSection() {
                             gap: '24px',
                         }}
                     >
-                        {filtered.map((release) => {
+                        {filtered.map((release, index) => {
                             const pData = getPlatformData(release.apple_music_url)
                             const pConfig = platformConfig[pData.platform] || platformConfig.apple_music
                             return (
                                 <div
                                     key={release.id}
-                                    className="glass-card glass-card-hover"
+                                    data-reveal
+                                    className={`glass-card glass-card-hover reveal reveal-delay-${Math.min(index + 1, 6)}`}
                                     style={{
                                         borderRadius: '20px',
                                         overflow: 'hidden',
-                                        transition: 'box-shadow 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
+                                        transition: 'box-shadow 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.7s var(--ease-smooth), transform 0.7s var(--ease-smooth)',
                                     }}
                                     onMouseEnter={(e) => {
                                         e.currentTarget.style.boxShadow = '0 30px 60px rgba(0,0,0,0.8)';
