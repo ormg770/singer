@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef } from 'react'
+import { supabase } from '@/lib/supabase'
 
 interface AudioUploaderProps {
     value: string // current URL
@@ -29,14 +30,23 @@ export default function AudioUploader({ value, onChange, folder = 'general', tok
         form.append('folder', folder)
 
         try {
-            const res = await fetch('/api/admin/upload', {
-                method: 'POST',
-                headers: { 'x-admin-token': token },
-                body: form,
-            })
-            const data = await res.json()
-            if (!res.ok) throw new Error(data.error || 'Upload failed')
-            onChange(data.url)
+            const ext = file.name.split('.').pop()
+            const filename = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
+
+            const { data, error: uploadError } = await supabase.storage
+                .from('diana-mae-assets')
+                .upload(filename, file, {
+                    contentType: file.type,
+                    upsert: false,
+                })
+
+            if (uploadError) throw new Error(uploadError.message)
+
+            const { data: urlData } = supabase.storage
+                .from('diana-mae-assets')
+                .getPublicUrl(data.path)
+
+            onChange(urlData.publicUrl)
         } catch (err: any) {
             setError(err.message)
         } finally {
