@@ -23,6 +23,12 @@ export default function ImageUploader({ value, onChange, folder = 'general', tok
         const file = e.target.files?.[0]
         if (!file) return
 
+        if (file.size > 10 * 1024 * 1024) {
+            setError('File is too large. Maximum size is 10MB')
+            if (inputRef.current) inputRef.current.value = ''
+            return
+        }
+
         setUploading(true)
         setError('')
 
