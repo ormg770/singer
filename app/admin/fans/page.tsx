@@ -8,7 +8,7 @@ type Subscriber = {
     id: string
     name: string
     email: string
-    created_at: string
+    subscribed_at: string
 }
 
 export default function AdminFansPage() {
@@ -46,7 +46,7 @@ export default function AdminFansPage() {
         const csvRows = [
             headers.join(','),
             ...subscribers.map(sub =>
-                `"${sub.name || ''}","${sub.email}","${new Date(sub.created_at).toISOString()}"`
+                `"${sub.name || ''}","${sub.email}","${new Date(sub.subscribed_at).toISOString()}"`
             )
         ]
 
@@ -136,7 +136,7 @@ export default function AdminFansPage() {
                                         <a href={`mailto:${sub.email}`} style={{ color: 'inherit', textDecoration: 'none' }}>{sub.email}</a>
                                     </td>
                                     <td style={{ padding: '16px 24px', color: 'rgba(255,255,255,0.5)', fontSize: '13px' }}>
-                                        {new Date(sub.created_at).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}
+                                        {new Date(sub.subscribed_at).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}
                                     </td>
                                 </tr>
                             ))}

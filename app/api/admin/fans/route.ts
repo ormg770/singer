@@ -12,7 +12,7 @@ export async function GET(request: Request) {
     const { data, error } = await supabase
         .from('newsletter_subscribers')
         .select('*')
-        .order('created_at', { ascending: false })
+        .order('subscribed_at', { ascending: false })
 
     if (error) {
         return NextResponse.json({ error: error.message }, { status: 500 })
