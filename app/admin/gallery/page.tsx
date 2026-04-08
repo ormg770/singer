@@ -17,11 +17,62 @@ function labelStyle(): React.CSSProperties {
 function Modal({ title, children, onClose }: { title: string; children: React.ReactNode; onClose: () => void }) {
     return (
         <div style={{ position: 'fixed', inset: 0, zIndex: 999, background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(8px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }} onClick={onClose}>
-            <div style={{ background: '#12111a', border: '1px solid rgba(147,51,234,0.25)', borderRadius: '20px', padding: '36px', width: '100%', maxWidth: 520, maxHeight: '90vh', overflowY: 'auto' }} onClick={(e) => e.stopPropagation()}>
-                <h2 style={{ fontFamily: 'Georgia, serif', fontWeight: 400, color: 'white', marginBottom: '24px', fontSize: '1.5rem' }}>{title}</h2>
+            <div style={{ background: '#12111a', border: '1px solid rgba(147,51,234,0.25)', borderRadius: '24px', padding: '36px', width: '100%', maxWidth: 520, maxHeight: '90vh', overflowY: 'auto', boxShadow: '0 20px 50px rgba(0,0,0,0.5)' }} onClick={(e) => e.stopPropagation()}>
+                <h2 style={{ fontFamily: 'Georgia, serif', fontWeight: 400, color: 'white', marginBottom: '24px', fontSize: '1.6rem', letterSpacing: '-0.02em' }}>{title}</h2>
                 {children}
             </div>
         </div>
+    )
+}
+
+function ConfirmModal({ title, message, onConfirm, onCancel, loading, error }: { title: string; message: string; onConfirm: () => void; onCancel: () => void; loading: boolean; error: string | null }) {
+    return (
+        <Modal title={title} onClose={loading ? () => { } : onCancel}>
+            <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: '15px', lineHeight: 1.6, marginBottom: '32px' }}>
+                {message}
+            </div>
+            {error && (
+                <div style={{ padding: '12px 16px', background: 'rgba(244,63,94,0.1)', border: '1px solid rgba(244,63,94,0.2)', borderRadius: '12px', color: '#f43f5e', fontSize: '13px', marginBottom: '24px' }}>
+                    ⚠️ {error}
+                </div>
+            )}
+            <div style={{ display: 'flex', gap: '12px' }}>
+                <button
+                    onClick={onConfirm}
+                    disabled={loading}
+                    style={{
+                        flex: 1,
+                        padding: '14px',
+                        background: loading ? 'rgba(244,63,94,0.3)' : '#f43f5e',
+                        border: 'none',
+                        borderRadius: '12px',
+                        color: 'white',
+                        fontWeight: 600,
+                        fontSize: '14px',
+                        cursor: loading ? 'wait' : 'pointer',
+                        transition: 'all 0.2s ease',
+                    }}
+                >
+                    {loading ? 'Deleting...' : 'Yes, Delete'}
+                </button>
+                <button
+                    onClick={onCancel}
+                    disabled={loading}
+                    style={{
+                        padding: '14px 24px',
+                        background: 'rgba(255,255,255,0.06)',
+                        border: '1px solid rgba(255,255,255,0.1)',
+                        borderRadius: '12px',
+                        color: 'white',
+                        fontWeight: 600,
+                        fontSize: '14px',
+                        cursor: 'pointer',
+                    }}
+                >
+                    Cancel
+                </button>
+            </div>
+        </Modal>
     )
 }
 
@@ -32,6 +83,9 @@ export default function AdminGalleryPage() {
     const [isNew, setIsNew] = useState(false)
     const [form, setForm] = useState(empty)
     const [saving, setSaving] = useState(false)
+    const [deletingId, setDeletingId] = useState<string | null>(null)
+    const [isDeleting, setIsDeleting] = useState(false)
+    const [deleteError, setDeleteError] = useState<string | null>(null)
 
     async function load() {
         const data = await fetch('/api/gallery').then((r) => r.json())
@@ -47,13 +101,38 @@ export default function AdminGalleryPage() {
         e.preventDefault(); setSaving(true)
         const method = isNew ? 'POST' : 'PUT'
         const body = isNew ? form : { id: editing!.id, ...form }
-        await fetch('/api/admin/gallery', { method, headers: { 'Content-Type': 'application/json', 'x-admin-token': token! }, body: JSON.stringify(body) })
-        setSaving(false); closeModal(); load()
+        try {
+            const res = await fetch('/api/admin/gallery', { method, headers: { 'Content-Type': 'application/json', 'x-admin-token': token! }, body: JSON.stringify(body) })
+            if (!res.ok) throw new Error('Failed to save photo')
+            setSaving(false); closeModal(); load()
+        } catch (err: any) {
+            alert(err.message)
+            setSaving(false)
+        }
     }
-    async function handleDelete(id: string) {
-        if (!confirm('Delete this photo?')) return
-        await fetch('/api/admin/gallery', { method: 'DELETE', headers: { 'Content-Type': 'application/json', 'x-admin-token': token! }, body: JSON.stringify({ id }) })
-        load()
+    function handleDelete(id: string) {
+        setDeletingId(id)
+        setDeleteError(null)
+    }
+    async function confirmDelete() {
+        if (!deletingId) return
+        setIsDeleting(true)
+        setDeleteError(null)
+        try {
+            const res = await fetch('/api/admin/gallery', {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json', 'x-admin-token': token! },
+                body: JSON.stringify({ id: deletingId })
+            })
+            const data = await res.json()
+            if (!res.ok) throw new Error(data.error || 'Failed to delete photo')
+            setDeletingId(null)
+            setIsDeleting(false)
+            load()
+        } catch (err: any) {
+            setDeleteError(err.message)
+            setIsDeleting(false)
+        }
     }
 
     return (
@@ -112,6 +191,17 @@ export default function AdminGalleryPage() {
                         </div>
                     </form>
                 </Modal>
+            )}
+
+            {deletingId && (
+                <ConfirmModal
+                    title="Delete Photo"
+                    message="Are you sure you want to permanently delete this photo? This action cannot be undone."
+                    onConfirm={confirmDelete}
+                    onCancel={() => setDeletingId(null)}
+                    loading={isDeleting}
+                    error={deleteError}
+                />
             )}
         </AdminShell>
     )
