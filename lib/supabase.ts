@@ -15,6 +15,7 @@ export type Release = {
     apple_music_url: string
     tagline?: string
     badge?: string
+    platform_links?: string
 }
 
 export type Show = {

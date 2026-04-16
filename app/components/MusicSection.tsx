@@ -5,12 +5,84 @@ import { Release } from '@/lib/supabase'
 import { useScrollReveal } from '../hooks/useScrollReveal'
 import { Icons } from './Icons'
 
+type PlatformLink = { platform: string; url: string }
+
+const platformConfig: Record<string, { label: string; icon: React.ReactNode; bg: string; border: string; color: string }> = {
+    spotify: { label: 'Spotify', icon: <Icons.Spotify style={{ width: 14, height: 14 }} />, bg: 'rgba(29, 185, 84, 0.15)', border: 'rgba(29,185,84,0.25)', color: '#1db954' },
+    apple_music: { label: 'Apple Music', icon: <Icons.Apple style={{ width: 14, height: 14 }} />, bg: 'rgba(252, 60, 74, 0.1)', border: 'rgba(252,60,74,0.2)', color: '#fc3c4a' },
+    amazon: { label: 'Amazon Music', icon: <Icons.Amazon style={{ width: 14, height: 14 }} />, bg: 'rgba(0, 168, 225, 0.1)', border: 'rgba(0,168,225,0.2)', color: '#00A8E1' },
+    youtube: { label: 'YouTube Music', icon: <Icons.YouTube style={{ width: 14, height: 14 }} />, bg: 'rgba(255, 0, 0, 0.1)', border: 'rgba(255,0,0,0.2)', color: '#FF0000' },
+    tidal: { label: 'Tidal', icon: <Icons.Tidal style={{ width: 14, height: 14 }} />, bg: 'rgba(255, 255, 255, 0.1)', border: 'rgba(255,255,255,0.2)', color: '#FFFFFF' },
+    soundcloud: { label: 'SoundCloud', icon: <Icons.SoundCloud style={{ width: 14, height: 14 }} />, bg: 'rgba(255, 85, 0, 0.1)', border: 'rgba(255,85,0,0.2)', color: '#FF5500' },
+    deezer: { label: 'Deezer', icon: <Icons.Deezer style={{ width: 14, height: 14 }} />, bg: 'rgba(162, 56, 255, 0.1)', border: 'rgba(162,56,255,0.2)', color: '#A238FF' },
+}
+
+// Preferred display order
+const platformOrder = ['spotify', 'apple_music', 'amazon', 'youtube', 'tidal', 'soundcloud', 'deezer']
+
+function parsePlatformLinks(release: Release): PlatformLink[] {
+    // Try new platform_links field first
+    if (release.platform_links) {
+        try {
+            const links = typeof release.platform_links === 'string'
+                ? JSON.parse(release.platform_links)
+                : release.platform_links
+            if (Array.isArray(links) && links.length > 0) {
+                return links.filter((l: PlatformLink) => l.url && l.url.trim() !== '')
+            }
+        } catch { /* fall through to legacy */ }
+    }
+
+    // Fallback: legacy fields
+    const result: PlatformLink[] = []
+    if (release.spotify_url) {
+        result.push({ platform: 'spotify', url: release.spotify_url })
+    }
+    if (release.apple_music_url) {
+        try {
+            const parsed = JSON.parse(release.apple_music_url)
+            if (parsed?.url) result.push({ platform: parsed.platform || 'apple_music', url: parsed.url })
+        } catch {
+            result.push({ platform: 'apple_music', url: release.apple_music_url })
+        }
+    }
+    return result
+}
+
 export default function MusicSection() {
     const [releases, setReleases] = useState<Release[]>([])
     const [settings, setSettings] = useState<Record<string, string>>({})
     const [filter, setFilter] = useState<'all' | 'album' | 'single' | 'ep'>('all')
     const [loading, setLoading] = useState(true)
     const sectionRef = useScrollReveal<HTMLElement>(0.1)
+
+    // After data loads, if the section was already revealed, reveal the new cards
+    useEffect(() => {
+        if (!loading && sectionRef.current) {
+            // Use requestAnimationFrame to ensure DOM has updated with the new cards
+            requestAnimationFrame(() => {
+                const section = sectionRef.current
+                if (!section) return
+                if (section.classList.contains('reveal-visible')) {
+                    // Cards rendered after observer fired — reveal them now
+                    const children = section.querySelectorAll('[data-reveal]')
+                    children.forEach((child) => child.classList.add('reveal-visible'))
+                }
+            })
+            // Failsafe: if observer never fired (e.g. section already in viewport on load),
+            // reveal everything after a short delay
+            const timer = setTimeout(() => {
+                const section = sectionRef.current
+                if (!section) return
+                if (!section.classList.contains('reveal-visible')) {
+                    section.classList.add('reveal-visible')
+                    const children = section.querySelectorAll('[data-reveal]')
+                    children.forEach((child) => child.classList.add('reveal-visible'))
+                }
+            }, 1200)
+            return () => clearTimeout(timer)
+        }
+    }, [loading, releases, filter])
 
     useEffect(() => {
         fetch('/api/releases')
@@ -35,26 +107,6 @@ export default function MusicSection() {
         album: '#9333ea',
         single: '#e040fb',
         ep: '#f5c842',
-    }
-
-    const platformConfig: Record<string, { label: string; icon: React.ReactNode; bg: string; border: string; color: string }> = {
-        apple_music: { label: 'Apple Music', icon: <Icons.Apple style={{ width: 14, height: 14 }} />, bg: 'rgba(252, 60, 74, 0.1)', border: 'rgba(252,60,74,0.2)', color: '#fc3c4a' },
-        amazon: { label: 'Amazon', icon: <Icons.Amazon style={{ width: 14, height: 14 }} />, bg: 'rgba(0, 168, 225, 0.1)', border: 'rgba(0,168,225,0.2)', color: '#00A8E1' },
-        youtube: { label: 'YouTube', icon: <Icons.YouTube style={{ width: 14, height: 14 }} />, bg: 'rgba(255, 0, 0, 0.1)', border: 'rgba(255,0,0,0.2)', color: '#FF0000' },
-        tidal: { label: 'Tidal', icon: <Icons.Tidal style={{ width: 14, height: 14 }} />, bg: 'rgba(255, 255, 255, 0.1)', border: 'rgba(255,255,255,0.2)', color: '#FFFFFF' },
-        soundcloud: { label: 'Soundcloud', icon: <Icons.SoundCloud style={{ width: 14, height: 14 }} />, bg: 'rgba(255, 85, 0, 0.1)', border: 'rgba(255,85,0,0.2)', color: '#FF5500' },
-    }
-
-    // Safely parse platform data
-    function getPlatformData(str: string | null) {
-        if (!str) return { platform: 'apple_music', url: '' }
-        try {
-            const parsed = JSON.parse(str)
-            if (parsed && typeof parsed === 'object') return parsed
-        } catch {
-            return { platform: 'apple_music', url: str }
-        }
-        return { platform: 'apple_music', url: '' }
     }
 
     return (
@@ -138,8 +190,14 @@ export default function MusicSection() {
                         }}
                     >
                         {filtered.map((release, index) => {
-                            const pData = getPlatformData(release.apple_music_url)
-                            const pConfig = platformConfig[pData.platform] || platformConfig.apple_music
+                            const links = parsePlatformLinks(release)
+                            // Sort by preferred order
+                            const sortedLinks = [...links].sort((a, b) => {
+                                const ai = platformOrder.indexOf(a.platform)
+                                const bi = platformOrder.indexOf(b.platform)
+                                return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi)
+                            })
+
                             return (
                                 <div
                                     key={release.id}
@@ -245,57 +303,58 @@ export default function MusicSection() {
                                             </p>
                                         )}
 
-                                        <div style={{ display: 'flex', gap: '10px' }}>
-                                            <a
-                                                href={release.spotify_url}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                style={{
-                                                    flex: 1,
-                                                    padding: '8px 0',
-                                                    borderRadius: '10px',
-                                                    background: 'rgba(29, 185, 84, 0.15)',
-                                                    border: '1px solid rgba(29,185,84,0.25)',
-                                                    color: '#1db954',
-                                                    fontSize: '12px',
-                                                    fontWeight: 600,
-                                                    textAlign: 'center',
-                                                    textDecoration: 'none',
-                                                    transition: 'all 0.3s ease',
-                                                    letterSpacing: '0.05em',
-                                                    display: 'inline-flex',
-                                                    alignItems: 'center',
-                                                    justifyContent: 'center',
-                                                    gap: '6px'
-                                                }}
-                                            >
-                                                <Icons.Spotify style={{ width: 14, height: 14 }} /> Spotify
-                                            </a>
-                                            <a
-                                                href={pData.url}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                style={{
-                                                    flex: 1,
-                                                    padding: '8px 0',
-                                                    borderRadius: '10px',
-                                                    background: pConfig.bg,
-                                                    border: `1px solid ${pConfig.border}`,
-                                                    color: pConfig.color,
-                                                    fontSize: '12px',
-                                                    fontWeight: 600,
-                                                    textAlign: 'center',
-                                                    textDecoration: 'none',
-                                                    transition: 'all 0.3s ease',
-                                                    letterSpacing: '0.05em',
-                                                    display: 'inline-flex',
-                                                    alignItems: 'center',
-                                                    justifyContent: 'center',
-                                                    gap: '6px'
-                                                }}
-                                            >
-                                                {pConfig.icon} {pConfig.label}
-                                            </a>
+                                        {/* Platform Links */}
+                                        <div style={{
+                                            display: 'grid',
+                                            gridTemplateColumns: sortedLinks.length > 2 ? 'repeat(2, 1fr)' : `repeat(${sortedLinks.length}, 1fr)`,
+                                            gap: '8px',
+                                        }}>
+                                            {sortedLinks.map((link) => {
+                                                const config = platformConfig[link.platform]
+                                                if (!config) return null
+                                                return (
+                                                    <a
+                                                        key={link.platform}
+                                                        href={link.url}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="platform-link-btn"
+                                                        style={{
+                                                            padding: '8px 6px',
+                                                            borderRadius: '10px',
+                                                            background: config.bg,
+                                                            border: `1px solid ${config.border}`,
+                                                            color: config.color,
+                                                            fontSize: '11px',
+                                                            fontWeight: 600,
+                                                            textAlign: 'center',
+                                                            textDecoration: 'none',
+                                                            transition: 'all 0.3s ease',
+                                                            letterSpacing: '0.03em',
+                                                            display: 'inline-flex',
+                                                            alignItems: 'center',
+                                                            justifyContent: 'center',
+                                                            gap: '5px',
+                                                            whiteSpace: 'nowrap',
+                                                            overflow: 'hidden',
+                                                        }}
+                                                        onMouseEnter={(e) => {
+                                                            e.currentTarget.style.background = config.color
+                                                            e.currentTarget.style.color = '#000'
+                                                            e.currentTarget.style.transform = 'translateY(-1px)'
+                                                            e.currentTarget.style.boxShadow = `0 4px 16px ${config.border}`
+                                                        }}
+                                                        onMouseLeave={(e) => {
+                                                            e.currentTarget.style.background = config.bg
+                                                            e.currentTarget.style.color = config.color
+                                                            e.currentTarget.style.transform = 'translateY(0)'
+                                                            e.currentTarget.style.boxShadow = 'none'
+                                                        }}
+                                                    >
+                                                        {config.icon} {config.label}
+                                                    </a>
+                                                )
+                                            })}
                                         </div>
                                     </div>
                                 </div>
