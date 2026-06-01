@@ -62,6 +62,13 @@ function parsePlatformLinks(release: Release): PlatformLink[] {
     return result.length > 0 ? result : [{ platform: 'spotify', url: '' }]
 }
 
+function isUpcoming(releaseDate: string): boolean {
+    if (!releaseDate) return false
+    const release = new Date(releaseDate + 'T00:00:00')
+    const now = new Date()
+    return release > now
+}
+
 function Modal({ title, children, onClose }: { title: string; children: React.ReactNode; onClose: () => void }) {
     return (
         <div
@@ -100,6 +107,76 @@ function labelStyle(): React.CSSProperties {
         display: 'block', fontSize: '11px', color: 'rgba(255,255,255,0.4)',
         letterSpacing: '0.1em', textTransform: 'uppercase' as const, marginBottom: '6px',
     }
+}
+
+/** TBA Cover placeholder preview for admin */
+function TBACoverPreview() {
+    return (
+        <div style={{
+            marginTop: '10px',
+            width: '100%',
+            aspectRatio: '16/9',
+            maxHeight: '160px',
+            borderRadius: '8px',
+            overflow: 'hidden',
+            background: 'linear-gradient(145deg, #0f0a1a 0%, #1a0e2e 40%, #12081f 100%)',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            position: 'relative',
+            border: '1px solid rgba(147,51,234,0.15)',
+        }}>
+            {/* Radial glow */}
+            <div style={{
+                position: 'absolute',
+                inset: 0,
+                background: 'radial-gradient(circle at 50% 50%, rgba(147, 51, 234, 0.1) 0%, transparent 70%)',
+            }} />
+            {/* Decorative ring */}
+            <div style={{
+                position: 'absolute',
+                width: '80%',
+                height: '150%',
+                border: '1px solid rgba(147, 51, 234, 0.06)',
+                borderRadius: '50%',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+            }} />
+            {/* Music note icon */}
+            <svg
+                width="32" height="32" viewBox="0 0 24 24" fill="none"
+                stroke="rgba(147,51,234,0.5)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
+                style={{ position: 'relative', zIndex: 1, marginBottom: '6px' }}
+            >
+                <path d="M9 18V5l12-2v13" />
+                <circle cx="6" cy="18" r="3" />
+                <circle cx="18" cy="16" r="3" />
+            </svg>
+            <p style={{
+                position: 'relative',
+                zIndex: 1,
+                fontSize: '10px',
+                fontWeight: 600,
+                letterSpacing: '0.2em',
+                textTransform: 'uppercase',
+                color: 'rgba(147,51,234,0.6)',
+                margin: 0,
+            }}>
+                Cover TBA
+            </p>
+            <p style={{
+                position: 'relative',
+                zIndex: 1,
+                fontSize: '9px',
+                color: 'rgba(255,255,255,0.25)',
+                margin: '4px 0 0 0',
+            }}>
+                This is what visitors will see
+            </p>
+        </div>
+    )
 }
 
 export default function AdminReleasesPage() {
@@ -209,6 +286,7 @@ export default function AdminReleasesPage() {
     }
 
     const usedPlatforms = form.platform_links.map(l => l.platform)
+    const formDateIsUpcoming = form.release_date ? isUpcoming(form.release_date) : false
 
     return (
         <AdminShell>
@@ -246,13 +324,81 @@ export default function AdminReleasesPage() {
                         const p = PLATFORMS.find(pl => pl.value === l.platform)
                         return p ? p.label : l.platform
                     })
+                    const upcoming = isUpcoming(r.release_date)
+                    const releaseDate = new Date(r.release_date + 'T00:00:00')
+                    const releaseDateStr = releaseDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+
                     return (
-                        <div key={r.id} style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '16px 20px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '14px' }}>
-                            {r.cover_url && <img src={r.cover_url} alt={r.title} style={{ width: 52, height: 52, borderRadius: '8px', objectFit: 'cover' }} />}
+                        <div key={r.id} style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '16px',
+                            padding: '16px 20px',
+                            background: upcoming ? 'rgba(245,200,66,0.03)' : 'rgba(255,255,255,0.04)',
+                            border: `1px solid ${upcoming ? 'rgba(245,200,66,0.15)' : 'rgba(255,255,255,0.07)'}`,
+                            borderRadius: '14px',
+                            transition: 'all 0.3s ease',
+                        }}>
+                            {/* Cover thumbnail or TBA mini */}
+                            {r.cover_url ? (
+                                <img src={r.cover_url} alt={r.title} style={{ width: 52, height: 52, borderRadius: '8px', objectFit: 'cover' }} />
+                            ) : (
+                                <div style={{
+                                    width: 52,
+                                    height: 52,
+                                    borderRadius: '8px',
+                                    background: 'linear-gradient(145deg, #0f0a1a, #1a0e2e)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    border: '1px solid rgba(147,51,234,0.15)',
+                                    flexShrink: 0,
+                                }}>
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(147,51,234,0.4)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                                        <path d="M9 18V5l12-2v13" />
+                                        <circle cx="6" cy="18" r="3" />
+                                        <circle cx="18" cy="16" r="3" />
+                                    </svg>
+                                </div>
+                            )}
                             <div style={{ flex: 1 }}>
-                                <div style={{ fontWeight: 600, color: 'white', fontSize: '15px' }}>{r.title}</div>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                    <span style={{ fontWeight: 600, color: 'white', fontSize: '15px' }}>{r.title}</span>
+                                    {upcoming && (
+                                        <span style={{
+                                            fontSize: '10px',
+                                            fontWeight: 700,
+                                            letterSpacing: '0.1em',
+                                            textTransform: 'uppercase',
+                                            color: '#f5c842',
+                                            background: 'rgba(245,200,66,0.12)',
+                                            border: '1px solid rgba(245,200,66,0.25)',
+                                            padding: '2px 8px',
+                                            borderRadius: '50px',
+                                            whiteSpace: 'nowrap',
+                                        }}>
+                                            ⏱ Upcoming
+                                        </span>
+                                    )}
+                                    {!r.cover_url && (
+                                        <span style={{
+                                            fontSize: '10px',
+                                            fontWeight: 600,
+                                            letterSpacing: '0.08em',
+                                            textTransform: 'uppercase',
+                                            color: 'rgba(147,51,234,0.7)',
+                                            background: 'rgba(147,51,234,0.1)',
+                                            border: '1px solid rgba(147,51,234,0.2)',
+                                            padding: '2px 8px',
+                                            borderRadius: '50px',
+                                            whiteSpace: 'nowrap',
+                                        }}>
+                                            Cover TBA
+                                        </span>
+                                    )}
+                                </div>
                                 <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.4)', marginTop: '2px' }}>
-                                    {r.type.toUpperCase()} · {r.release_date}
+                                    {r.type.toUpperCase()} · {upcoming ? releaseDateStr : r.release_date}
                                     {platformNames.length > 0 && (
                                         <span style={{ marginLeft: '8px', color: 'rgba(255,255,255,0.25)' }}>
                                             · {platformNames.join(', ')}
@@ -283,12 +429,32 @@ export default function AdminReleasesPage() {
                                 onChange={(url) => setForm({ ...form, cover_url: url })}
                                 token={token!}
                                 folder="releases"
-                                hint="Square (1:1), min 800x800px"
+                                hint="Square (1:1), min 800x800px. Leave empty for TBA placeholder."
                             />
+                            {/* TBA placeholder preview when no cover */}
+                            {!form.cover_url && <TBACoverPreview />}
                         </div>
                         <div>
                             <label style={labelStyle()}>Release Date</label>
                             <input type="date" value={form.release_date} onChange={(e) => setForm({ ...form, release_date: e.target.value })} style={inputStyle()} />
+                            {/* Upcoming date hint */}
+                            {formDateIsUpcoming && (
+                                <div style={{
+                                    marginTop: '8px',
+                                    padding: '8px 12px',
+                                    borderRadius: '8px',
+                                    background: 'rgba(245,200,66,0.08)',
+                                    border: '1px solid rgba(245,200,66,0.2)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '8px',
+                                }}>
+                                    <span style={{ fontSize: '14px' }}>⏱</span>
+                                    <span style={{ fontSize: '12px', color: 'rgba(245,200,66,0.85)', lineHeight: 1.4 }}>
+                                        This release date is in the future — visitors will see a <strong>countdown timer</strong> and platform buttons will be <strong>disabled</strong> until this date.
+                                    </span>
+                                </div>
+                            )}
                         </div>
                         <div>
                             <label style={labelStyle()}>Tagline (Editorial Description)</label>
@@ -338,6 +504,20 @@ export default function AdminReleasesPage() {
                                     </button>
                                 )}
                             </div>
+
+                            {/* Upcoming note for platform links */}
+                            {formDateIsUpcoming && (
+                                <p style={{
+                                    fontSize: '11px',
+                                    color: 'rgba(255,255,255,0.35)',
+                                    fontStyle: 'italic',
+                                    marginBottom: '12px',
+                                    padding: '0 2px',
+                                }}>
+                                    💡 Links are optional for upcoming releases. All platforms will show as disabled until the release date.
+                                </p>
+                            )}
+
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                                 {form.platform_links.map((link, index) => {
                                     const pConfig = PLATFORMS.find(p => p.value === link.platform)

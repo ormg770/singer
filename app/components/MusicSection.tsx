@@ -20,6 +20,9 @@ const platformConfig: Record<string, { label: string; icon: React.ReactNode; bg:
 // Preferred display order
 const platformOrder = ['spotify', 'apple_music', 'amazon', 'youtube', 'tidal', 'soundcloud', 'deezer']
 
+// All platforms for upcoming releases with no links
+const allPlatformLinks: PlatformLink[] = platformOrder.map(p => ({ platform: p, url: '' }))
+
 function parsePlatformLinks(release: Release): PlatformLink[] {
     // Try new platform_links field first
     if (release.platform_links) {
@@ -47,6 +50,125 @@ function parsePlatformLinks(release: Release): PlatformLink[] {
         }
     }
     return result
+}
+
+function isUpcoming(releaseDate: string): boolean {
+    const release = new Date(releaseDate + 'T00:00:00')
+    const now = new Date()
+    return release > now
+}
+
+type CountdownTime = { days: number; hours: number; minutes: number; seconds: number }
+
+function getCountdown(releaseDate: string): CountdownTime {
+    const release = new Date(releaseDate + 'T00:00:00')
+    const now = new Date()
+    const diff = Math.max(0, release.getTime() - now.getTime())
+    return {
+        days: Math.floor(diff / (1000 * 60 * 60 * 24)),
+        hours: Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+        minutes: Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)),
+        seconds: Math.floor((diff % (1000 * 60)) / 1000),
+    }
+}
+
+function TBACoverPlaceholder() {
+    return (
+        <div className="tba-cover-placeholder">
+            {/* Decorative rings */}
+            <div style={{
+                position: 'absolute',
+                width: '120%',
+                height: '120%',
+                border: '1px solid rgba(147, 51, 234, 0.08)',
+                borderRadius: '50%',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+            }} />
+            <div style={{
+                position: 'absolute',
+                width: '80%',
+                height: '80%',
+                border: '1px solid rgba(224, 64, 251, 0.06)',
+                borderRadius: '50%',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+            }} />
+
+            {/* Music note icon */}
+            <div style={{ position: 'relative', zIndex: 1, marginBottom: '12px' }}>
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="url(#tba-gradient)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <defs>
+                        <linearGradient id="tba-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stopColor="#9333ea" />
+                            <stop offset="100%" stopColor="#e040fb" />
+                        </linearGradient>
+                    </defs>
+                    <path d="M9 18V5l12-2v13" />
+                    <circle cx="6" cy="18" r="3" />
+                    <circle cx="18" cy="16" r="3" />
+                </svg>
+            </div>
+
+            {/* TBA text */}
+            <p style={{
+                position: 'relative',
+                zIndex: 1,
+                fontFamily: 'var(--font-body)',
+                fontSize: '11px',
+                fontWeight: 600,
+                letterSpacing: '0.25em',
+                textTransform: 'uppercase',
+                background: 'linear-gradient(135deg, rgba(147,51,234,0.7), rgba(224,64,251,0.7))',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+                margin: 0,
+            }}>
+                Cover TBA
+            </p>
+        </div>
+    )
+}
+
+function CountdownTimer({ releaseDate }: { releaseDate: string }) {
+    const [countdown, setCountdown] = useState<CountdownTime>(getCountdown(releaseDate))
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setCountdown(getCountdown(releaseDate))
+        }, 1000)
+        return () => clearInterval(interval)
+    }, [releaseDate])
+
+    const pad = (n: number) => String(n).padStart(2, '0')
+
+    return (
+        <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '4px',
+            padding: '12px 14px 8px',
+        }}>
+            {[
+                { value: countdown.days, label: 'Days' },
+                { value: countdown.hours, label: 'Hrs' },
+                { value: countdown.minutes, label: 'Min' },
+                { value: countdown.seconds, label: 'Sec' },
+            ].map((item, i) => (
+                <div key={item.label} style={{ display: 'flex', alignItems: 'center', gap: '4px', flex: 1 }}>
+                    <div className="countdown-digit" style={{ width: '100%' }}>
+                        <div className="digit-value">{pad(item.value)}</div>
+                        <div className="digit-label">{item.label}</div>
+                    </div>
+                    {i < 3 && <span className="countdown-separator">:</span>}
+                </div>
+            ))}
+        </div>
+    )
 }
 
 export default function MusicSection() {
@@ -101,7 +223,15 @@ export default function MusicSection() {
             })
     }, [])
 
+    // Sort: upcoming releases first, then by release_date descending
     const filtered = filter === 'all' ? releases : releases.filter((r) => r.type === filter)
+    const sorted = [...filtered].sort((a, b) => {
+        const aUpcoming = isUpcoming(a.release_date)
+        const bUpcoming = isUpcoming(b.release_date)
+        if (aUpcoming && !bUpcoming) return -1
+        if (!aUpcoming && bUpcoming) return 1
+        return 0 // keep existing order from API (already sorted by release_date desc)
+    })
 
     const typeColors: Record<string, string> = {
         album: '#9333ea',
@@ -189,20 +319,29 @@ export default function MusicSection() {
                             gap: '24px',
                         }}
                     >
-                        {filtered.map((release, index) => {
+                        {sorted.map((release, index) => {
+                            const upcoming = isUpcoming(release.release_date)
                             const links = parsePlatformLinks(release)
+                            // For upcoming releases with no links, show all platforms as disabled
+                            const displayLinks = upcoming && links.length === 0
+                                ? allPlatformLinks
+                                : links
                             // Sort by preferred order
-                            const sortedLinks = [...links].sort((a, b) => {
+                            const sortedLinks = [...displayLinks].sort((a, b) => {
                                 const ai = platformOrder.indexOf(a.platform)
                                 const bi = platformOrder.indexOf(b.platform)
                                 return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi)
                             })
 
+                            // Format the release date nicely for the badge
+                            const releaseDate = new Date(release.release_date + 'T00:00:00')
+                            const releaseDateStr = releaseDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+
                             return (
                                 <div
                                     key={release.id}
                                     data-reveal
-                                    className={`glass-card glass-card-hover reveal reveal-delay-${Math.min(index + 1, 6)}`}
+                                    className={`glass-card glass-card-hover reveal reveal-delay-${Math.min(index + 1, 6)} ${upcoming ? 'upcoming-card' : ''}`}
                                     style={{
                                         borderRadius: '20px',
                                         overflow: 'hidden',
@@ -225,17 +364,21 @@ export default function MusicSection() {
                                 >
                                     {/* Cover */}
                                     <div style={{ position: 'relative', aspectRatio: '1', overflow: 'hidden' }}>
-                                        <img
-                                            src={release.cover_url}
-                                            alt={release.title}
-                                            className="release-cover"
-                                            style={{
-                                                width: '100%',
-                                                height: '100%',
-                                                objectFit: 'cover',
-                                                transition: 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
-                                            }}
-                                        />
+                                        {release.cover_url ? (
+                                            <img
+                                                src={release.cover_url}
+                                                alt={release.title}
+                                                className="release-cover"
+                                                style={{
+                                                    width: '100%',
+                                                    height: '100%',
+                                                    objectFit: 'cover',
+                                                    transition: 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
+                                                }}
+                                            />
+                                        ) : (
+                                            <TBACoverPlaceholder />
+                                        )}
 
                                         {/* Dark overlay on hover */}
                                         <div
@@ -250,30 +393,60 @@ export default function MusicSection() {
                                             }}
                                         />
 
-                                        {/* Type badge */}
-                                        <div
-                                            style={{
-                                                position: 'absolute',
-                                                top: '14px',
-                                                left: '14px',
-                                                padding: '5px 12px',
-                                                borderRadius: '50px',
-                                                background: typeColors[release.type] + '33',
-                                                border: `1px solid ${typeColors[release.type]}66`,
-                                                color: typeColors[release.type],
-                                                fontSize: '11px',
-                                                fontWeight: 600,
-                                                letterSpacing: '0.1em',
-                                                textTransform: 'uppercase',
-                                                backdropFilter: 'blur(10px)',
-                                            }}
-                                        >
-                                            {release.badge || release.type}
-                                        </div>
+                                        {/* Type badge or Coming Soon badge */}
+                                        {upcoming ? (
+                                            <div
+                                                className="badge-coming-soon"
+                                                style={{
+                                                    position: 'absolute',
+                                                    top: '14px',
+                                                    left: '14px',
+                                                    padding: '5px 14px',
+                                                    borderRadius: '50px',
+                                                    fontSize: '11px',
+                                                    fontWeight: 600,
+                                                    letterSpacing: '0.1em',
+                                                    textTransform: 'uppercase',
+                                                    backdropFilter: 'blur(10px)',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: '5px',
+                                                }}
+                                            >
+                                                <span style={{ fontSize: '9px' }}>✦</span>
+                                                Drops {releaseDateStr}
+                                                <span style={{ fontSize: '9px' }}>✦</span>
+                                            </div>
+                                        ) : (
+                                            <div
+                                                style={{
+                                                    position: 'absolute',
+                                                    top: '14px',
+                                                    left: '14px',
+                                                    padding: '5px 12px',
+                                                    borderRadius: '50px',
+                                                    background: typeColors[release.type] + '33',
+                                                    border: `1px solid ${typeColors[release.type]}66`,
+                                                    color: typeColors[release.type],
+                                                    fontSize: '11px',
+                                                    fontWeight: 600,
+                                                    letterSpacing: '0.1em',
+                                                    textTransform: 'uppercase',
+                                                    backdropFilter: 'blur(10px)',
+                                                }}
+                                            >
+                                                {release.badge || release.type}
+                                            </div>
+                                        )}
                                     </div>
 
+                                    {/* Countdown Timer for upcoming releases */}
+                                    {upcoming && (
+                                        <CountdownTimer releaseDate={release.release_date} />
+                                    )}
+
                                     {/* Info */}
-                                    <div style={{ padding: '20px' }}>
+                                    <div style={{ padding: upcoming ? '4px 20px 20px' : '20px' }}>
                                         <h3
                                             style={{
                                                 fontFamily: 'var(--font-display)',
@@ -286,7 +459,13 @@ export default function MusicSection() {
                                             {release.title}
                                         </h3>
                                         <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: release.tagline ? '8px' : '16px' }}>
-                                            {new Date(release.release_date).getFullYear()}
+                                            {upcoming ? (
+                                                <span style={{ color: 'var(--accent-gold)', fontWeight: 500 }}>
+                                                    {release.type.toUpperCase()} · Coming Soon
+                                                </span>
+                                            ) : (
+                                                new Date(release.release_date).getFullYear()
+                                            )}
                                         </p>
 
                                         {release.tagline && (
@@ -312,6 +491,37 @@ export default function MusicSection() {
                                             {sortedLinks.map((link) => {
                                                 const config = platformConfig[link.platform]
                                                 if (!config) return null
+
+                                                if (upcoming) {
+                                                    // Disabled platform button for upcoming releases
+                                                    return (
+                                                        <div
+                                                            key={link.platform}
+                                                            className="platform-disabled"
+                                                            style={{
+                                                                padding: '8px 6px',
+                                                                borderRadius: '10px',
+                                                                background: config.bg,
+                                                                border: `1px solid ${config.border}`,
+                                                                color: config.color,
+                                                                fontSize: '11px',
+                                                                fontWeight: 600,
+                                                                textAlign: 'center',
+                                                                letterSpacing: '0.03em',
+                                                                display: 'inline-flex',
+                                                                alignItems: 'center',
+                                                                justifyContent: 'center',
+                                                                gap: '5px',
+                                                                whiteSpace: 'nowrap',
+                                                                overflow: 'hidden',
+                                                            }}
+                                                        >
+                                                            <span style={{ fontSize: '9px', opacity: 0.7 }}>🔒</span>
+                                                            {config.label}
+                                                        </div>
+                                                    )
+                                                }
+
                                                 return (
                                                     <a
                                                         key={link.platform}
