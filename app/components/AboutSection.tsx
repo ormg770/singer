@@ -22,12 +22,6 @@ export default function AboutSection() {
         return () => window.removeEventListener('scroll', handleScroll)
     }, [])
     const [settings, setSettings] = useState<Record<string, string>>({
-        bio_text: 'Born under a sky full of stars in the heart of New Orleans, Diana Mae found her voice in the space between silence and thunder. Her music weaves soul, dark pop, and cinematic soundscapes into something entirely her own.',
-        bio_text_2: 'After years of performing in intimate venues across the American South, Diana burst onto the global stage with her debut EP Midnight Veil in 2023, amassing over 50 million streams.',
-        stat_releases: '4',
-        stat_streams: '50M+',
-        stat_countries: '20+',
-        bio_title: 'A Voice That Commands the Dark',
         bio_image: '', // Start empty to prevent initial flash of placeholder if a custom one exists
     })
 
@@ -160,10 +154,10 @@ export default function AboutSection() {
                                             lineHeight: 1,
                                         }}
                                     >
-                                        {settings.bio_badge_primary_text || '2M+'}
+                                        {settings.bio_badge_primary_text || ''}
                                     </div>
                                     <div style={{ fontSize: '13px', color: 'rgba(255, 235, 150, 0.8)', marginTop: '4px', letterSpacing: '0.02em' }}>
-                                        {settings.bio_badge_secondary_text || 'Monthly Listeners'}
+                                        {settings.bio_badge_secondary_text || ''}
                                     </div>
                                 </div>
                             </div>
@@ -185,7 +179,7 @@ export default function AboutSection() {
                                     <Icons.MusicNote style={{ width: 24, height: 24 }} />
                                 </div>
                                 <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.7)', marginTop: '4px', letterSpacing: '0.05em' }}>
-                                    {settings.bio_badge_text || 'Since 2019'}
+                                    {settings.bio_badge_text || ''}
                                 </div>
                             </div>
                         </div>
@@ -257,10 +251,22 @@ export default function AboutSection() {
                                 marginBottom: '40px',
                             }}
                         >
-                            {[
-                                { value: settings.stat_releases ?? '24+', label: settings.stat_label_1 ?? 'Releases', icon: settings.stat_icon_1 },
-                                { value: settings.stat_streams ?? '5M+', label: settings.stat_label_2 ?? 'Streams', icon: settings.stat_icon_2 },
-                                { value: settings.stat_countries ?? '12', label: settings.stat_label_3 ?? 'Countries Toured', icon: settings.stat_icon_3 },
+                           {[
+                                {
+                                    value: settings.stat_releases || '',
+                                    label: settings.stat_label_1 || '',
+                                    icon: settings.stat_icon_1
+                                },
+                                {
+                                    value: settings.stat_streams || '',
+                                    label: settings.stat_label_2 || '',
+                                    icon: settings.stat_icon_2
+                                },
+                                {
+                                    value: settings.stat_countries || '',
+                                    label: settings.stat_label_3 || '',
+                                    icon: settings.stat_icon_3
+                                },
                             ].map((stat, i) => {
                                 const IconComponent = stat.icon && stat.icon !== 'None' ? Icons[stat.icon as keyof typeof Icons] : null;
                                 return (
