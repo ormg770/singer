@@ -12,16 +12,16 @@ export const metadata: Metadata = {
     url: "https://dianamae.com/pixel-perfect",
     images: [
       {
-        url: "https://dianamae.com/pixel-perfect-cover.jpg",
-        width: 1108,
-        height: 1108,
+        url: "https://dianamae.com/pixel-perfect-cover-v2.jpg",
+        width: 3000,
+        height: 3000,
         alt: "Pixel Perfect by Diana Mae — official cover",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    images: ["https://dianamae.com/pixel-perfect-cover.jpg"],
+    images: ["https://dianamae.com/pixel-perfect-cover-v2.jpg"],
   },
 };
 
