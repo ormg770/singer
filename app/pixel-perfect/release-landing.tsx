@@ -127,10 +127,10 @@ export default function ReleaseLanding() {
               <span>01 — 26.10.26</span>
             </div>
             <Image
-              src="/pixel-perfect-cover.jpg"
+              src="/pixel-perfect-cover-v2.jpg"
               alt="Official cover artwork for Pixel Perfect by Diana Mae"
-              width={1108}
-              height={1108}
+              width={3000}
+              height={3000}
               priority
               sizes="(max-width: 760px) 88vw, 45vw"
               className={styles.cover}
