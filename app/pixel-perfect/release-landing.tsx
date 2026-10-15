@@ -117,6 +117,11 @@ export default function ReleaseLanding() {
         </div>
 
         <figure className={styles.artwork}>
+          <div className={styles.cameraFlashes} aria-hidden="true">
+            <span className={styles.cameraFlash} />
+            <span className={styles.cameraFlash} />
+            <span className={styles.cameraFlash} />
+          </div>
           <div className={styles.orbit} aria-hidden="true" />
           <span className={styles.star} aria-hidden="true">
             ✦
