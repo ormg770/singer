@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b0b10">
+<title>Pixel Perfect — Flash Hunt · Prototipo</title>
+<style>
+:root{color-scheme:dark;--pink:#f65db5;--white:#f6f3f7;--dim:#aaa6b3;--black:#0a0a0f}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#07070b;color:var(--white);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}button,input{font:inherit}button{cursor:pointer}button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #fff;outline-offset:4px}[hidden]{display:none!important}
+body{background:radial-gradient(ellipse at 50% 5%,#332137 0%,#0b0b10 43%,#050507 100%)}
+.shell{margin:0 auto;max-width:500px;min-height:100dvh;position:relative;border-inline:1px solid #27212d;background:#0c0c11;box-shadow:0 0 100px #000a;overflow:hidden}
+.screen{position:relative;min-height:100dvh;padding:20px 19px 28px;background-image:linear-gradient(#ffffff08 1px,transparent 1px),linear-gradient(90deg,#ffffff08 1px,transparent 1px);background-size:72px 72px;display:flex;flex-direction:column}
+.minihead{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:34px}.eyebrow{color:var(--pink);letter-spacing:.22em;font:500 11px ui-monospace,SFMono-Regular,monospace}.ghost{border:1px solid #403842;background:#ffffff08;color:#ddd;padding:8px 11px;border-radius:8px;font-size:12px}.ghost:active{transform:scale(.97)}
+.intro{align-items:center;justify-content:center;text-align:center;padding-top:72px;padding-bottom:80px}
+.corner{position:absolute;left:20px;top:26px;color:var(--pink);font:12px ui-monospace,monospace;letter-spacing:.18em}
+.intro .skip{position:absolute;top:18px;right:20px}
+.camera-hero{margin:12px auto 22px;width:184px;height:174px;display:grid;place-items:center;position:relative}
+.camera-svg{width:152px;height:128px;filter:drop-shadow(0 0 28px #ed5ead41)}
+.orbit{position:absolute;inset:5px;border-radius:50%;border:1px dashed #ef83c55f;animation:spin 14s linear infinite}.orbit:after{content:'✦';position:absolute;top:10px;left:9px;color:#f68ecf;font-size:27px;filter:drop-shadow(0 0 10px #f68ecf)}
+@keyframes spin{to{transform:rotate(360deg)}}
+.bigtitle{font-size:clamp(48px,13vw,70px);line-height:.91;font-weight:1000;font-style:italic;letter-spacing:-.085em;text-align:center;margin:6px 0 8px;text-shadow:0 5px 0 #161119;background:linear-gradient(170deg,#fff 5%,#bcbac8 44%,#797687 57%,#fff 79%);-webkit-background-clip:text;background-clip:text;color:transparent;padding-right:10px}
+.pinktag{color:#fa81c5;font:12px ui-monospace,monospace;letter-spacing:.21em;margin:7px 0 14px}
+.introcopy{font-size:14px;line-height:1.55;color:#c9c5d0;max-width:330px;margin:0 auto 22px}
+.primary{display:flex;justify-content:center;align-items:center;gap:10px;background:var(--pink);border:0;color:#190b15;box-shadow:5px 6px 0 #6e3266,0 0 34px #f65db52f;padding:17px 20px;font-size:16px;font-weight:900;letter-spacing:.02em;min-height:54px;border-radius:2px}.primary:hover{background:#ff87cc}.primary:active{transform:translate(2px,2px);box-shadow:3px 4px 0 #6e3266}
+.primary.full{width:100%}
+.upload{display:inline-flex;align-items:center;gap:8px;margin-top:22px;padding:11px 14px;border:1px dashed #7f627f;color:#e9c9de;font:12px ui-monospace,monospace;border-radius:4px;cursor:pointer;max-width:100%}.upload input{display:none}.filename{display:block;font:11px ui-monospace,monospace;color:#cba6c1;margin-top:10px;max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.footnote{font:10px/1.45 ui-monospace,monospace;color:#88818c;margin-top:17px;max-width:330px}
+.game{padding-top:17px}.hudline{display:flex;justify-content:space-between;margin:10px 0 13px;gap:8px}.shots{display:flex;gap:8px}.shot{width:26px;height:26px;border:1px solid #6f5b72;color:#746e7d;display:grid;place-items:center;font-size:13px;border-radius:2px;background:#14131a}.shot.done{color:#0b0610;border-color:#f88dcc;background:#f88dcc;box-shadow:0 0 13px #e864b86b}
+.instructions{margin:0 0 16px;color:#bfb4c3;font-size:12px;line-height:1.5}
+.arena{height:clamp(310px,52dvh,560px);min-height:310px;border:1px solid #6c586b;position:relative;overflow:hidden;touch-action:none;cursor:crosshair;background:radial-gradient(circle at 20% 24%,#2b1d2b 0%,transparent 29%),radial-gradient(circle at 87% 70%,#161c35 0%,transparent 27%),linear-gradient(140deg,#070911,#100c15 60%,#090910)}
+.arena:before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,#ffffff0c 1px,transparent 1px),linear-gradient(#ffffff0b 1px,transparent 1px);background-size:58px 58px;opacity:.57;pointer-events:none}.arena:after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 3px,#0000001c 4px);pointer-events:none}
+.frame{position:absolute;inset:14px;border:1px solid #ffffff1a;pointer-events:none}.frame span{position:absolute;width:24px;height:24px;border-color:#e6d7e1;border-style:solid}.frame span:nth-child(1){top:-2px;left:-2px;border-width:3px 0 0 3px}.frame span:nth-child(2){top:-2px;right:-2px;border-width:3px 3px 0 0}.frame span:nth-child(3){bottom:-2px;left:-2px;border-width:0 0 3px 3px}.frame span:nth-child(4){bottom:-2px;right:-2px;border-width:0 3px 3px 0}
+.arena-label{position:absolute;top:20px;left:27px;font:10px ui-monospace,monospace;color:#f9cced;letter-spacing:.14em;pointer-events:none}
+.target{position:absolute;left:50%;top:42%;width:32px;height:32px;margin:-16px;transform:translate3d(0,0,0);background:#fff;border-radius:50%;box-shadow:0 0 6px 6px #ffeafb,0 0 22px 12px #fa7bca,0 0 60px 28px #d347a085,0 0 120px 45px #d347a04d;pointer-events:none;will-change:left,top}
+.target:after,.target:before{content:'';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:#fff6fa;pointer-events:none}.target:after{width:130px;height:2px}.target:before{width:2px;height:130px}
+.target-core{position:absolute;inset:-18px;border:1px solid #ff9bdb66;border-radius:50%;animation:pulse 1.5s ease-in-out infinite alternate}@keyframes pulse{to{transform:scale(1.32);opacity:.35}}
+.aim{position:absolute;left:45%;top:65%;width:104px;height:104px;transform:translate(-50%,-50%);border:2px solid #eeeeeedb;border-radius:9px;box-shadow:0 0 0 1px #0009,0 0 20px #ffffff22;pointer-events:auto;touch-action:none;cursor:pointer;will-change:left,top;transition:border-color .1s,box-shadow .1s,transform .12s ease;z-index:3}
+.aim:before,.aim:after{content:'';position:absolute;background:#f8f6fa99}.aim:before{height:1px;left:35%;right:35%;top:50%}.aim:after{width:1px;top:35%;bottom:35%;left:50%}.aim.lock{border-color:#ff78c4;box-shadow:0 0 0 2px #f26bb044,0 0 30px #f26bb065}.aim.lock:before,.aim.lock:after{background:var(--pink)}.aim:active{transform:translate(-50%,-50%) scale(.97)}
+.locktext{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);font:700 9px ui-monospace,monospace;white-space:nowrap;color:#f2d9e8;letter-spacing:.08em}
+.flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:5}.flash.on{animation:flash .4s ease-out forwards}@keyframes flash{0%{opacity:0}15%{opacity:1}100%{opacity:0}}
+.feedback{position:absolute;bottom:22px;left:0;right:0;text-align:center;z-index:4;color:#fff;font:700 12px ui-monospace,monospace;letter-spacing:.14em;text-shadow:0 2px 8px #000;pointer-events:none;padding:0 15px}
+.gamefoot{display:flex;align-items:center;gap:14px;margin-top:17px}.hint{flex:1;min-width:0;font-size:12px;color:#cfc6d0;line-height:1.5}.hint strong{color:#fc9bd2;font:700 12px ui-monospace,monospace}.shutter{flex:0 0 84px;width:84px;height:84px;border:7px solid #d7d1dc;border-radius:50%;box-shadow:0 0 0 5px #635662,0 5px 22px #0009;background:#f65db5;display:grid;place-items:center;touch-action:manipulation;color:#200c18}.shutter span{width:41px;height:41px;border:2px solid #411528;border-radius:50%;display:grid;place-items:center;font-size:25px}.shutter:disabled{opacity:.6;cursor:default}.shutter:active:not(:disabled){transform:scale(.93)}
+.thumbrow{display:flex;gap:10px;justify-content:center;margin-top:23px;align-items:flex-end}.thumb{width:58px;height:68px;position:relative;display:block;overflow:hidden;transform:rotate(-4deg);background:#17131b;border:3px solid #65586a;border-bottom-width:10px;box-shadow:0 8px 18px #0006}.thumb::before{content:"";position:absolute;inset:0;background-image:var(--thumb-image);background-size:200% 200%;background-position:var(--bg-pos, 0% 0%);opacity:0;transform:scale(1.13);transition:opacity .35s ease,transform .4s ease;filter:saturate(1.06) contrast(1.02)}.thumb::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,#ffffff18,transparent 40%,#00000024 100%);opacity:.8}.thumb .thumb-label{position:absolute;left:50%;bottom:8px;transform:translateX(-50%);font:700 10px ui-monospace,monospace;letter-spacing:.12em;color:#a592a5;text-shadow:0 1px 2px #000}.thumb.on{border-color:#eadce3}.thumb.on::before{opacity:1;transform:scale(1)}.thumb.on .thumb-label{color:#fff}.thumb.pop{animation:thumbPop .42s ease}.thumb:nth-child(2){transform:rotate(5deg)}.thumb:nth-child(3){transform:rotate(-7deg)}.thumb:nth-child(4){transform:rotate(4deg)}@keyframes thumbPop{0%{transform:scale(.86) rotate(var(--rot,-4deg));opacity:.5}65%{transform:scale(1.06) rotate(var(--rot,-4deg))}100%{transform:scale(1) rotate(var(--rot,-4deg))}}
+.finale{position:absolute;inset:0;z-index:12;display:grid;place-items:center;background:radial-gradient(circle at center,#fff2 0%,#120d17 36%,#050507 80%);opacity:0;pointer-events:none;overflow:hidden}.finale[hidden]{display:none!important}.finale::before,.finale::after{content:"";position:absolute;inset:-20%;opacity:0}.finale::before{background:radial-gradient(circle at center,#fff 0%,#ffd6ee 12%,#ff7bc8 20%,transparent 58%);filter:blur(4px)}.finale::after{background:conic-gradient(from 0deg,#ffffffd0 0 12deg,transparent 12deg 45deg,#ffffff90 45deg 52deg,transparent 52deg 90deg,#ffffffd0 90deg 102deg,transparent 102deg 135deg,#ffffff90 135deg 142deg,transparent 142deg 180deg,#ffffffd0 180deg 192deg,transparent 192deg 225deg,#ffffff90 225deg 232deg,transparent 232deg 270deg,#ffffffd0 270deg 282deg,transparent 282deg 315deg,#ffffff90 315deg 322deg,transparent 322deg 360deg);mask:radial-gradient(circle at center,transparent 0 26%,#000 36%,transparent 54%);opacity:.16;filter:blur(1px)}.finale-play{animation:finaleFade 2.2s ease forwards}.finale-play::before{animation:finaleBurst 2.2s ease forwards}.finale-play::after{animation:finaleSpin 2.2s ease forwards}.finale-core{position:relative;width:min(76vw,320px);aspect-ratio:1;border-radius:50%;display:grid;place-items:center}.finale-shutter{position:absolute;inset:10%;border-radius:50%;background:radial-gradient(circle at center,#ffffff 0 9%,#ffe1f1 10% 12%,transparent 13%),repeating-conic-gradient(from -10deg,#fdf5fb 0 18deg,#c9bfcb 18deg 36deg);mask:radial-gradient(circle at center,transparent 0 16%,#000 17% 60%,transparent 61%);opacity:0;transform:scale(.8)}.finale-rings{position:absolute;inset:22%;border-radius:50%;border:1px solid #f8c7e4;box-shadow:0 0 0 10px #ffffff08,0 0 0 22px #f164b625,0 0 50px #f164b64a;opacity:0;transform:scale(.7)}.finale-copy{position:relative;text-align:center;padding:18px 18px 0;z-index:2}.finale-tag{font:700 12px ui-monospace,monospace;letter-spacing:.24em;color:#ffd1eb;margin-bottom:12px}.finale-title{font-size:clamp(52px,14vw,88px);line-height:.88;font-weight:1000;font-style:italic;letter-spacing:-.08em;text-shadow:0 5px 0 #231626;background:linear-gradient(170deg,#fff 6%,#ffd6ee 26%,#c5bbcc 46%,#7f6f83 58%,#fff 82%);-webkit-background-clip:text;background-clip:text;color:transparent}.finale-sub{margin-top:10px;font:12px ui-monospace,monospace;letter-spacing:.18em;color:#f8bddd}.finale-play .finale-rings{animation:ringPulse 2.2s ease forwards}.finale-play .finale-shutter{animation:shutterBloom 2.2s ease forwards}.finale-play .finale-copy{animation:copyLift 2.2s ease forwards}@keyframes finaleFade{0%{opacity:0}8%{opacity:1}88%{opacity:1}100%{opacity:0}}@keyframes finaleBurst{0%{opacity:0;transform:scale(.2)}16%{opacity:1}60%{opacity:.92}100%{opacity:0;transform:scale(1.4)}}@keyframes finaleSpin{0%{opacity:0;transform:scale(.4) rotate(0)}16%{opacity:.18}100%{opacity:0;transform:scale(1.3) rotate(180deg)}}@keyframes ringPulse{0%{opacity:0;transform:scale(.55)}22%{opacity:1}62%{opacity:1;transform:scale(1.08)}100%{opacity:0;transform:scale(1.26)}}@keyframes shutterBloom{0%{opacity:0;transform:scale(.58) rotate(-24deg)}16%{opacity:.9}48%{opacity:.95;transform:scale(1) rotate(12deg)}100%{opacity:0;transform:scale(1.34) rotate(80deg)}}@keyframes copyLift{0%{opacity:0;transform:translateY(24px) scale(.9)}18%{opacity:1}60%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-18px) scale(1.04)}}
+.landing{padding-top:25px}.land-top{color:var(--pink);font:12px ui-monospace,monospace;letter-spacing:.2em;margin-top:48px}.land-title{font-size:clamp(60px,15vw,81px);text-align:left;line-height:1.01;margin:16px 0 31px}.poster{margin:6px 8px 26px;border:1px solid #c3b8cb;background:#18161e;padding:14px 13px 20px;transform:rotate(3deg);box-shadow:10px 16px 0 #050507,0 0 45px #f65db51f}.posterhead{display:flex;justify-content:space-between;color:#ded6e4;font:12px ui-monospace,monospace;margin-bottom:8px}.poster img{width:100%;aspect-ratio:1;object-fit:cover;display:block;border:1px solid #5e5369;background:linear-gradient(120deg,#2b243a,#b264b4)}.postertext{font:12px ui-monospace,monospace;line-height:1.7;margin-top:13px;color:#ddd6de}.landing .primary{margin-top:32px;text-decoration:none}.ending{font-size:12px;color:#bbb4bf;line-height:1.6;margin:20px 3px;text-align:center}.footeractions{display:flex;justify-content:center;gap:12px;margin-top:18px}.landing .land-top{margin-top:26px}
+@media (min-width:520px){.shell{margin:25px auto;min-height:calc(100dvh - 50px);border:1px solid #403040;border-radius:14px}.screen{min-height:calc(100dvh - 52px)}}
+@media (prefers-reduced-motion:reduce){.orbit,.target-core{animation:none}}
+
+/* The flawless cover fractures into physical image tiles. The page behind is revealed in the gaps. */
+.fracture-canvas{position:absolute;inset:0;width:100%;height:100%;z-index:80;pointer-events:none;display:block}
+.fracture-canvas[hidden]{display:none!important}
+.landing.revealing{animation:landingExposure 1.2s ease-out both}
+@keyframes landingExposure{from{filter:brightness(1.8) saturate(.55)}to{filter:brightness(1) saturate(1)}}
+@media (prefers-reduced-motion:reduce){.landing.revealing{animation:none}}
+
+.finale.sequence{position:fixed;inset:0;opacity:1;z-index:70;background:radial-gradient(ellipse at 50% 40%,#32172c,#09070ef5 70%);transition:opacity .6s;pointer-events:none}
+.sequence .finale-core{align-self:start;margin-top:20dvh;width:min(80vw,340px)}
+.sequence .finale-copy{animation:sequenceTitle 1s ease both}
+.sequence .finale-rings{opacity:.35;transform:scale(1)}
+.sequence .finale-sub{font-size:10px}
+.flying-piece{position:fixed;z-index:75;margin:0;transition:transform .75s cubic-bezier(.2,.7,.2,1),filter .15s,box-shadow .15s;border-color:#eadce3}
+.flying-piece::before{opacity:1;transform:scale(1)}
+.flying-piece.beat{filter:brightness(1.65);box-shadow:0 0 0 3px #fff2,0 0 35px #ff77ca;animation:pieceBeat .48s ease}
+.flying-piece.lit{border-color:#ff9dd7}
+@keyframes pieceBeat{0%{filter:brightness(2.4)}100%{filter:brightness(1)}}
+@keyframes sequenceTitle{from{opacity:0;translate:0 22px;filter:blur(8px)}to{opacity:1;translate:0 0;filter:blur(0)}}
+@media(prefers-reduced-motion:reduce){.flying-piece{transition:none}.sequence .finale-copy{animation:none}}
+ .rewards{margin:22px 0 0;padding:20px 14px;border:1px solid #f88dcc44;background:#f88dcc08;text-align:center}.rewards p{font:12px/1.6 ui-monospace,monospace;color:#e6bfd7}.rewardbuttons{display:grid;gap:12px}.rewardbuttons button{min-height:48px}.rewardpreview{width:100%;max-width:240px;margin:16px auto;display:block;border-radius:3px}.rewardstatus{min-height:2.8em;font-size:12px;color:#f9c9e4} 
+.fan-label{display:block;text-align:left;font-size:12px;color:#f6c2e0;margin:18px 0 8px}.fan-input{width:100%;border:1px solid #ac63918c;background:#110c16;color:#fff;border-radius:12px;padding:14px;font-size:16px}.fan-input::placeholder{color:#9d8199}
+.rewards{border-radius:20px;background:radial-gradient(ellipse at top,#f88dcc20,transparent 65%),#120d18;box-shadow:0 12px 40px #0004}.rewardbuttons .share-pretty{display:flex;align-items:center;justify-content:center;gap:12px;border:1px solid #ffb7e0;background:linear-gradient(120deg,#ffb5de,#ee74ba);color:#301025;border-radius:14px;font-weight:800;box-shadow:0 5px 22px #ed74b92b}.share-pretty svg{width:22px;height:22px}.rewardbuttons #savePhoto{border-radius:14px;border-color:#9e668a}.share-dialog{width:min(90vw,390px);border:1px solid #aa628d;border-radius:22px;background:#180f1f;color:#fff;padding:24px;box-shadow:0 20px 80px #0009}.share-dialog::backdrop{background:#08050cbb;backdrop-filter:blur(6px)}.share-dialog h2{margin:0 0 10px;font-size:22px}.share-dialog p{font-size:13px;line-height:1.6;color:#d6bbce}.share-options{display:grid;gap:12px;margin:20px 0}.share-options a{text-decoration:none;text-align:center}.share-dialog .ghost{padding:14px;border-radius:12px}.share-close{width:100%}
+body.reward-mode{background:transparent}body.reward-mode .shell{min-height:0;max-width:500px;border:0;box-shadow:none;background:transparent}body.reward-mode .landing{min-height:0;padding:0 18px 20px;background:none}body.reward-mode .landing>*:not(.rewards){display:none!important}body.reward-mode .rewards{margin-top:0}body.reward-mode #fractureCanvas{display:none!important}body.integrated-fracture{background:transparent}body.integrated-fracture .shell{background:transparent;border-color:transparent;box-shadow:none}body.integrated-fracture #landing{visibility:hidden}</style>
+</head>
+<body>
+<main class="shell">
+ <section id="intro" class="screen intro">
+   <span class="corner">✧ NEW SINGLE / 001</span>
+   <button id="skipIntro" class="ghost skip">Skip intro ↗</button>
+   <div class="camera-hero" aria-hidden="true"><div class="orbit"></div><svg class="camera-svg" viewBox="0 0 180 140" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21 45h28l11-19h57l11 19h29q10 0 10 10v67q0 10-10 10H21q-10 0-10-10V55q0-10 10-10Z" stroke="#f89bd0" stroke-width="5"/><circle cx="89" cy="84" r="34" stroke="#fcf1fa" stroke-width="6"/><circle cx="89" cy="84" r="19" stroke="#fcf1fa" stroke-width="3"/><path d="M138 62h15" stroke="#f89bd0" stroke-width="7"/></svg></div>
+   <div class="pinktag">DIANA MAE PRESENTS</div>
+   <h1 class="bigtitle">PIXEL<br>PERFECT</h1>
+   <div class="pinktag">FLASH HUNT / MINI EXPERIENCE</div>
+   <p class="introcopy">Chase the lights with your camera. Focus and capture <b>4 photos</b> to reveal the new single.</p>
+   <button id="start" class="primary" type="button">PLAY FLASH HUNT <span aria-hidden="true">↗</span></button>
+   
+   <span id="filename" hidden></span>
+   
+ </section>
+ <section id="game" class="screen game" hidden>
+   <div class="minihead"><span class="eyebrow">◉ REC / PIXEL PERFECT</span><button id="sound" class="ghost" aria-pressed="false" type="button">♫ Sound: ON</button></div>
+   <div class="hudline"><span class="eyebrow">CAPTURES <span id="progress">00/04</span></span><div class="shots" id="shots" aria-label="Captured photos"><span class="shot">1</span><span class="shot">2</span><span class="shot">3</span><span class="shot">4</span></div></div>
+   <p class="instructions">Drag to move the viewfinder. When it turns pink, tap it or the shutter to take your shot.</p>
+   <div class="arena" id="arena" aria-label="Game area: move the camera toward the light"><div class="frame"><span></span><span></span><span></span><span></span></div><div class="arena-label">LIVE VIEW ● 2002</div><div class="target" id="target"><span class="target-core"></span></div><div class="aim" id="aim"><span class="locktext" id="locktext">SEARCHING...</span></div><div class="flash" id="flash"></div><div class="feedback" id="feedback" aria-live="polite"></div></div>
+   <div class="gamefoot"><p class="hint"><strong id="hintTitle">FIND THE LIGHT</strong><br><span id="hintText">Move the viewfinder and tap it when it turns pink.</span></p><button type="button" id="shutter" class="shutter" aria-label="Take a photo"><span>●</span></button></div>
+   <div class="thumbrow" id="thumbs"><span class="thumb" style="--rot:-4deg;--bg-pos:0% 0%"><span class="thumb-label">01</span></span><span class="thumb" style="--rot:5deg;--bg-pos:100% 0%"><span class="thumb-label">02</span></span><span class="thumb" style="--rot:-7deg;--bg-pos:0% 100%"><span class="thumb-label">03</span></span><span class="thumb" style="--rot:4deg;--bg-pos:100% 100%"><span class="thumb-label">04</span></span></div><div class="finale" id="finale" hidden aria-hidden="true"><div class="finale-core"><div class="finale-rings"></div><div class="finale-shutter"></div><div class="finale-copy"><div class="finale-tag">LAST FLASH / 004</div><div class="finale-title">PERFECT<br>SHOT</div><div class="finale-sub">REVEALING PIXEL PERFECT…</div></div></div></div>
+ </section>
+ <section id="landing" class="screen landing" hidden>
+   <div class="minihead"><span class="eyebrow">✧ PERFECT SHOT UNLOCKED</span><button id="replay" class="ghost" type="button">↻ Repetir</button></div>
+   <div class="land-top">✧ NEW SINGLE / 001</div>
+   <h2 class="bigtitle land-title">PIXEL<br>PERFECT</h2>
+   <div class="poster"><div class="posterhead"><span>PIXEL_PERFECT / 001</span><span>● REC</span></div><img alt="Portada de Pixel Perfect de Diana Mae" src="/pixel-perfect-cover-v2.jpg"><div class="postertext">26.10.26<br>NEW SINGLE<br>DIGITAL DREAMS, REAL FEELINGS</div></div>
+   <a class="primary full" href="https://www.dianamae.com/pixel-perfect" target="_blank" rel="noopener">IR AL PRE-SAVE REAL ↗</a>
+   <p class="ending">¡Capturaste las cuatro luces! Esta es una versión de prueba; la página original permanece intacta.</p>
+   <div class="rewards"><span class="eyebrow">YOUR KEEPSAKE / 004</span><p>Four captures. A photo to keep.</p><label class="fan-label" for="fanName">An autograph for you ♡ <span>(optional)</span></label><input id="fanName" class="fan-input" type="text" maxlength="32" autocomplete="given-name" placeholder="Your name"><img id="rewardPreview" class="rewardpreview" alt="Postal de Pixel Perfect con marco y sello Perfect Shot" hidden><div class="rewardbuttons"><button id="shareExperience" class="ghost share-pretty" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 10.5 6.8-4M8.6 13.5l6.8 4"/></svg>Share the experience</button><button id="savePhoto" class="ghost" type="button">↓ Save your photo ✦</button></div><p id="rewardStatus" class="rewardstatus" role="status" aria-live="polite"></p></div><div class="footeractions"><button id="preview" class="ghost" type="button">♫ Play the song preview</button></div>
+ </section>
+<canvas class="fracture-canvas" id="fractureCanvas" aria-hidden="true" hidden></canvas>
+</main><dialog id="shareDialog" class="share-dialog" aria-labelledby="shareTitle"><h2 id="shareTitle">Share a little magic ✦</h2><p id="shareHelp"></p><div class="share-options"><a id="shareWhatsapp" class="ghost" target="_blank" rel="noopener">Share on WhatsApp</a><button id="copyGameLink" class="ghost" type="button">Copy link</button><button id="shareSave" class="ghost" type="button">Save my postcard ♡</button></div><p id="shareDialogStatus" role="status"></p><button id="closeShare" class="ghost share-close" type="button">Back</button></dialog>
+<script>
+(()=>{
+ const $=id=>document.getElementById(id),intro=$('intro'),game=$('game'),landing=$('landing'),arena=$('arena'),aim=$('aim'),target=$('target'),flash=$('flash'),shutter=$('shutter'),feedback=$('feedback'),finale=$('finale'),fractureCanvas=$('fractureCanvas'),shell=document.querySelector('.shell'),thumbs=$('thumbs'),posterImg=document.querySelector('.poster img');
+ const builtInAudio='/pixel-perfect/capture.mp3';
+ const shotRanges=[[.03,.46],[.94,1.35],[2.17,2.86],[3.41,3.82]];
+ let musicBuffer=null,musicLoading=null,musicGeneration=0,musicSources=new Set();
+ const finaleAudio='/pixel-perfect/unlocked.mp3';
+ let finaleBuffer=null,finaleLoading=null,sequenceRaf=0,sequenceTimers=[],flyingPieces=[],sequenceActive=false;
+ function prepareFinale(){if(!finaleLoading){finaleLoading=fetch(finaleAudio).then(response=>{if(!response.ok)throw Error('Audio unavailable');return response.arrayBuffer()}).then(bytes=>ctx.decodeAudioData(bytes)).then(b=>finaleBuffer=b).catch(error=>{finaleLoading=null;console.error(error);return null})}return finaleLoading}
+ function cleanSequence(){cancelAnimationFrame(sequenceRaf);sequenceTimers.forEach(clearTimeout);sequenceTimers=[];flyingPieces.forEach(el=>el.remove());flyingPieces=[];finale.classList.remove('sequence');sequenceActive=false}
+ let shotAudios=[];
+ let n=0,active=false,soundOn=true,ready=true,hasAim=false,ax=.45,ay=.66,tx=.5,ty=.42,seed=0,startedAt=0,ctx=null,audioUrl=null,userAudio=null,audioTimer=null,raf=0,lastFeedbackTimer=null,finaleTimer=null,fractureRaf=0,fractureRevealTimer=0,transitionGeneration=0;
+ let muted=false,aimTap=null,lastAimShot=0;
+ function show(screen){intro.hidden=screen!=='intro';game.hidden=screen!=='game';landing.hidden=screen!=='landing';if(screen==='landing')parent.postMessage({type:'pixel-perfect-reveal'},location.origin)}
+ function initThumbs(){const src=posterImg&&posterImg.getAttribute('src');if(!src)return;[...thumbs.children].forEach(el=>el.style.setProperty('--thumb-image',`url(${src})`))}
+ function initShotAudios(){prepareMusic();prepareFinale()}
+ function prepareMusic(){
+  if(musicLoading)return musicLoading;
+  try{ctx=ctx||new(window.AudioContext||window.webkitAudioContext)();
+   musicLoading=fetch(builtInAudio).then(response=>{if(!response.ok)throw Error('Audio unavailable');return response.arrayBuffer()}).then(bytes=>ctx.decodeAudioData(bytes)).then(buffer=>{musicBuffer=buffer;return buffer}).catch(error=>{musicLoading=null;console.error('No se pudo preparar el audio',error);throw error});
+   musicLoading.catch(()=>{});return musicLoading;
+  }catch(error){return Promise.reject(error)}
+ }
+ function stopShotAudios(){musicGeneration++;musicSources.forEach(source=>{try{source.stop()}catch(e){}});musicSources.clear()}
+ function playBuiltInShot(index){
+  if(!soundOn||!shotRanges[index])return false;
+  const c=audioContext();if(!c)return false;
+  const generation=musicGeneration;
+  const play=buffer=>{if(!soundOn||generation!==musicGeneration)return;
+   const [start,end]=shotRanges[index],source=c.createBufferSource(),gain=c.createGain();
+   source.buffer=buffer;gain.gain.value=.92;source.connect(gain).connect(c.destination);
+   musicSources.add(source);source.onended=()=>{musicSources.delete(source);source.disconnect();gain.disconnect()};
+   source.start(0,start,Math.min(end,buffer.duration)-start);
+  };
+  if(musicBuffer)play(musicBuffer);else prepareMusic().then(play).catch(()=>{temporaryMessage('Could not load the audio. Please try again.');});
+  return true;
+ }
+ function hideFinale(){clearTimeout(finaleTimer);finale.hidden=true;finale.classList.remove('finale-play')}
+ function clearFracture(){transitionGeneration++;cancelAnimationFrame(fractureRaf);clearTimeout(fractureRevealTimer);fractureCanvas.hidden=true;landing.classList.remove('revealing')}
+ function finaleSting(){const c=audioContext();if(!c)return;[[740,.08,'triangle',.03],[880,.18,'triangle',.034],[1174,.29,'sine',.05],[1567,.46,'sine',.06]].forEach(([f,o,t,g])=>synth(f,c.currentTime+o,.38,t,g));}
+ function audioContext(){if(!soundOn)return null;try{ctx=ctx||new(window.AudioContext||window.webkitAudioContext)();if(ctx.state!=='running')ctx.resume().catch(error=>console.error('Audio suspendido',error));return ctx}catch(e){return null}}
+ function synth(freq,at,duration,type='triangle',gain=.05){const c=audioContext();if(!c)return;const o=c.createOscillator(),g=c.createGain();o.type=type;o.frequency.setValueAtTime(freq,at);g.gain.setValueAtTime(.0001,at);g.gain.exponentialRampToValueAtTime(gain,at+.015);g.gain.exponentialRampToValueAtTime(.0001,at+duration);o.connect(g).connect(c.destination);o.start(at);o.stop(at+duration+.02)}
+ function clickSound(){const c=audioContext();if(!c)return;const len=Math.floor(c.sampleRate*.085),buffer=c.createBuffer(1,len,c.sampleRate),d=buffer.getChannelData(0);for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/len,3);const source=c.createBufferSource(),filter=c.createBiquadFilter(),g=c.createGain();source.buffer=buffer;filter.type='highpass';filter.frequency.value=900;g.gain.value=.35;source.connect(filter).connect(g).connect(c.destination);source.start();synth(165,c.currentTime,.07,'square',.035)}
+ function stopSample(){if(audioTimer){clearTimeout(audioTimer);audioTimer=null}if(userAudio){userAudio.pause()}stopShotAudios()}
+ function playSample(start,dur){if(!soundOn||!userAudio||!isFinite(userAudio.duration)||!userAudio.duration)return false;stopSample();const d=userAudio.duration;userAudio.currentTime=Math.min(d-.02,Math.max(0,start));userAudio.volume=.72;const p=userAudio.play();if(p&&p.catch)p.catch(()=>{});audioTimer=setTimeout(()=>{if(userAudio)userAudio.pause()},Math.min(d-start,dur)*1000);return true}
+ function melody(shot){if(!soundOn)return;const c=audioContext();if(!c)return;const patterns=[[440,554.37,659.25],[493.88,659.25,739.99],[523.25,659.25,880],[659.25,783.99,987.77]];const notes=patterns[Math.min(shot,3)];notes.forEach((f,i)=>synth(f,c.currentTime+i*.155,.29,'triangle',.045))}
+ function musicForShot(index){if(userAudio && isFinite(userAudio.duration)&&userAudio.duration>0){const len=userAudio.duration;const seg=len/4;playSample(index*seg,Math.min(seg,3));return}if(playBuiltInShot(index))return;melody(index)}
+ function revealMusic(){if(userAudio&&userAudio.duration>0){const len=userAudio.duration;playSample(Math.max(0,len-4),Math.min(4,len))}else{const c=audioContext();if(c){[523.25,659.25,783.99,1046.5].forEach((f,i)=>synth(f,c.currentTime+i*.19,.6,'sine',.055))}}}
+ function draw(ts){if(!active)return;const t=(ts-startedAt)/1000;tx=.5+.29*Math.sin(.70*t+seed*1.8)+.035*Math.sin(1.8*t+seed);ty=.44+.22*Math.cos(.88*t+seed*2.2);tx=Math.max(.13,Math.min(.87,tx));ty=Math.max(.18,Math.min(.75,ty));target.style.left=(tx*100)+'%';target.style.top=(ty*100)+'%';const w=arena.clientWidth,h=arena.clientHeight,locked=Math.hypot((ax-tx)*w,(ay-ty)*h)<Math.min(84,Math.max(60,w*.18));aim.classList.toggle('lock',locked);$('locktext').textContent=locked?'FOCUS LOCK':'SEARCHING...';$('hintTitle').textContent=locked?'FOCUS LOCK ✦':'FIND THE LIGHT';$('hintText').textContent=locked?'Now! Tap the viewfinder or shutter.':'Move the viewfinder and tap it when it turns pink.';raf=requestAnimationFrame(draw)}
+ function placeAim(evt){const r=arena.getBoundingClientRect();ax=Math.max(.12,Math.min(.88,(evt.clientX-r.left)/r.width));ay=Math.max(.13,Math.min(.85,(evt.clientY-r.top)/r.height));aim.style.left=(ax*100)+'%';aim.style.top=(ay*100)+'%';hasAim=true}
+ arena.addEventListener('pointerdown',e=>{if(!active)return;aimTap=aim.contains(e.target)?{x:e.clientX,y:e.clientY,id:e.pointerId}:null;if(!aimTap)placeAim(e);if(e.pointerType==='touch'){try{arena.setPointerCapture(e.pointerId)}catch(err){/* eventos simulados */}}});
+ arena.addEventListener('pointerup',e=>{if(!active||!aimTap)return;const wasTap=aimTap.id===e.pointerId&&Math.hypot(e.clientX-aimTap.x,e.clientY-aimTap.y)<14;aimTap=null;if(wasTap){lastAimShot=performance.now();takePhoto()}});
+ arena.addEventListener('pointercancel',()=>{aimTap=null});
+ arena.addEventListener('pointermove',e=>{if(!active)return;if(e.pointerType==='mouse'||e.buttons||e.pressure>0)placeAim(e)});
+ 
+ function temporaryMessage(msg){clearTimeout(lastFeedbackTimer);feedback.textContent=msg;lastFeedbackTimer=setTimeout(()=>feedback.textContent='',900)}
+ function doFlash(){flash.classList.remove('on');void flash.offsetWidth;flash.classList.add('on')}
+ function updateProgress(){ $('progress').textContent=String(n).padStart(2,'0')+'/04';[...$('shots').children].forEach((el,i)=>el.classList.toggle('done',i<n));[...thumbs.children].forEach((el,i)=>{const should=i<n;const was=el.classList.contains('on');el.classList.toggle('on',should);if(should&&!was){el.classList.remove('pop');void el.offsetWidth;el.classList.add('pop');setTimeout(()=>el.classList.remove('pop'),420)}})}
+ function playFinale(){
+  active=false;cancelAnimationFrame(raf);ready=false;shutter.disabled=true;
+  // Let the fourth capture finish before lifting the completed cover.
+  finaleTimer=setTimeout(()=>{
+   sequenceActive=true;finale.hidden=false;finale.classList.remove('finale-play');finale.classList.add('sequence');
+   finale.querySelector('.finale-sub').textContent='FOUR FRAGMENTS / ONE SONG';
+   const title=finale.querySelector('.finale-copy').getBoundingClientRect();
+   const size=Math.min(64,(window.innerWidth-80)/4),gap=12,total=size*4+gap*3;
+   [...thumbs.children].forEach((piece,i)=>{
+    const r=piece.getBoundingClientRect(),clone=piece.cloneNode(true);clone.classList.remove('pop');clone.classList.add('flying-piece');
+    clone.style.cssText=piece.style.cssText;clone.style.setProperty('--thumb-image',piece.style.getPropertyValue('--thumb-image'));clone.style.left=r.left+'px';clone.style.top=r.top+'px';clone.style.width=r.width+'px';clone.style.height=r.height+'px';clone.style.transform='rotate(0deg)';document.body.appendChild(clone);flyingPieces.push(clone);
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{const x=(window.innerWidth-total)/2+i*(size+gap),y=Math.min(window.innerHeight-110,title.bottom+30);clone.style.transform='translate('+(x-r.left)+'px,'+(y-r.top)+'px) rotate('+([-6,4,-3,6][i])+'deg)';}));
+   });
+   sequenceTimers.push(setTimeout(()=>prepareFinale().then(buffer=>{
+    if(!sequenceActive)return;
+    const c=audioContext(),origin=c?c.currentTime+.06:0,wall=performance.now()+60;
+    if(c&&buffer){const source=c.createBufferSource(),gain=c.createGain();source.buffer=buffer;gain.gain.value=.85;source.connect(gain).connect(c.destination);musicSources.add(source);source.onended=()=>{musicSources.delete(source);source.disconnect();gain.disconnect()};source.start(origin);}
+    const beats=[.10,.72,1.34,1.96];let next=0;
+    function tick(){if(!sequenceActive)return;const elapsed=c&&buffer?c.currentTime-origin:(performance.now()-wall)/1000;
+     while(next<beats.length&&elapsed>=beats[next]){const piece=flyingPieces[next];piece.classList.add('beat','lit');piece.dataset.beat=String(next+1);next++;}
+     if(elapsed>=2.65){flyingPieces.forEach(el=>el.remove());flyingPieces=[];startFracture();return}sequenceRaf=requestAnimationFrame(tick);
+    }sequenceRaf=requestAnimationFrame(tick);
+   }),800));
+  },550);
+ }
+
+
+ function breakSound(){const c=audioContext();if(!c)return;const now=c.currentTime;[0,.042,.095,.17,.26].forEach((offset,i)=>{
+  synth(920-i*132,now+offset,.085,'sawtooth',.016);
+ });}
+ function drawFrozenPerfectShot(g,w,h){
+  let gr=g.createRadialGradient(w*.5,h*.42,8,w*.5,h*.50,Math.max(w,h)*.75);
+  gr.addColorStop(0,'#44203a');gr.addColorStop(.22,'#1c101f');gr.addColorStop(.63,'#0b0810');gr.addColorStop(1,'#050509');
+  g.fillStyle=gr;g.fillRect(0,0,w,h);
+  g.strokeStyle='rgba(255,191,229,.11)';g.lineWidth=1;
+  for(let i=-4;i<12;i++){const x=i*64+13;g.beginPath();g.moveTo(x,0);g.lineTo(x,h);g.stroke()}
+  for(let y=25;y<h;y+=68){g.beginPath();g.moveTo(0,y);g.lineTo(w,y);g.stroke()}
+  const cy=h*.49,cx=w/2,r=Math.min(w*.40,205);
+  const halo=g.createRadialGradient(cx,cy,10,cx,cy,r*1.55);
+  halo.addColorStop(0,'rgba(255,206,239,.65)');halo.addColorStop(.22,'rgba(244,119,186,.18)');halo.addColorStop(.64,'rgba(233,95,177,.06)');halo.addColorStop(1,'rgba(0,0,0,0)');
+  g.fillStyle=halo;g.fillRect(0,0,w,h);
+  g.save();g.translate(cx,cy);g.lineWidth=1;
+  for(let j=0;j<12;j++){g.save();g.rotate(Math.PI*2*j/12);g.strokeStyle=j%3===0?'rgba(255,233,246,.45)':'rgba(251,147,207,.25)';g.beginPath();g.moveTo(0,-r*.62);g.lineTo(0,-r*.90);g.stroke();g.restore()}
+  g.strokeStyle='rgba(255,219,239,.5)';g.beginPath();g.arc(0,0,r*.76,0,Math.PI*2);g.stroke();
+  g.strokeStyle='rgba(255,219,239,.15)';g.lineWidth=2;g.beginPath();g.arc(0,0,r*.98,0,Math.PI*2);g.stroke();g.restore();
+  g.textAlign='center';g.textBaseline='middle';g.fillStyle='#ffc4e1';g.shadowColor='#f65db5';g.shadowBlur=12;
+  g.font='700 12px ui-monospace, monospace';g.fillText('LAST FLASH / 004',cx,cy-98);g.shadowBlur=0;
+  const sz=Math.min(79,Math.max(49,w*.15));g.font=`italic 1000 ${sz}px system-ui,Arial,sans-serif`;
+  g.save();g.translate(cx,cy+2);g.transform(1,0,-.12,1,0,0);
+  const grad=g.createLinearGradient(0,-sz*1.0,0,sz*.9);
+  grad.addColorStop(0,'#ffffff');grad.addColorStop(.36,'#ffe8f6');grad.addColorStop(.56,'#b9aabf');grad.addColorStop(.71,'#62566b');grad.addColorStop(.87,'#ffffff');
+  g.shadowColor='#ff8acb';g.shadowBlur=24;g.fillStyle=grad;
+  g.fillText('PERFECT',0,-sz*.38);g.fillText('SHOT',0,sz*.58);
+  g.restore();g.shadowBlur=0;
+  g.fillStyle='#e99bcc';g.font='11px ui-monospace, monospace';g.fillText('REVEALING PIXEL PERFECT…',cx,cy+sz*1.47);
+  if(posterImg.complete&&posterImg.naturalWidth){const size=Math.min(58,w*.14),gap=12,total=size*4+gap*3,yy=cy+sz*1.85;for(let i=0;i<4;i++){const xx=cx-total/2+i*(size+gap),sw=posterImg.naturalWidth/2,sh=posterImg.naturalHeight/2;g.fillStyle='#eadce3';g.fillRect(xx-3,yy-3,size+6,size+13);g.drawImage(posterImg,(i%2)*sw,Math.floor(i/2)*sh,sw,sh,xx,yy,size,size);}}
+  // Small camera reticle accent
+  g.strokeStyle='rgba(255,212,236,.38)';g.lineWidth=1;
+  const rr=16,left=cx-r*.76,right=cx+r*.76,top=cy-r*.76,bottom=cy+r*.76;
+  for(const [x,y,sx,sy] of [[left,top,1,1],[right,top,-1,1],[left,bottom,1,-1],[right,bottom,-1,-1]]){
+   g.beginPath();g.moveTo(x+rr*sx,y);g.lineTo(x,y);g.lineTo(x,y+rr*sy);g.stroke()
+  }
+ }
+ function startFracture(){
+  const generation=++transitionGeneration;
+  hideFinale();
+  const w=Math.max(1,Math.round(shell.clientWidth));
+  const h=Math.max(1,Math.round(shell.clientHeight));
+  const scale=Math.min(window.devicePixelRatio||1,1.6);
+  fractureCanvas.width=Math.round(w*scale);fractureCanvas.height=Math.round(h*scale);
+  const draw=fractureCanvas.getContext('2d',{alpha:true});
+  draw.setTransform(scale,0,0,scale,0,0);
+  const still=document.createElement('canvas');still.width=Math.round(w*scale);still.height=Math.round(h*scale);
+  const sg=still.getContext('2d');sg.setTransform(scale,0,0,scale,0,0);
+  drawFrozenPerfectShot(sg,w,h);
+  const tileSize=Math.max(23,Math.round(Math.min(w,h)/15));
+  const tiles=[];
+  for(let y=0;y<h;y+=tileSize){for(let x=0;x<w;x+=tileSize){
+    const ww=Math.min(tileSize,w-x),hh=Math.min(tileSize,h-y);
+    const vx=(x+ww/2-w/2)/Math.max(w/2,1),vy=(y+hh/2-h*.49)/Math.max(h*.5,1);
+    const radial=Math.min(1,Math.hypot(vx,vy));
+    const a=Math.atan2(vy,vx);const random=Math.random();
+    tiles.push({x,y,w:ww,h:hh,delay:radial*.21+Math.random()*.08,dx:Math.cos(a)*(75+random*170)+(Math.random()-.5)*85,dy:Math.sin(a)*(120+random*220)+(Math.random()-.5)*100,spin:(Math.random()-.5)*2.6,tint:random>.87});
+  }}
+  fractureCanvas.hidden=false;
+  document.body.classList.add('integrated-fracture');show('landing');landing.classList.remove('revealing');void landing.offsetWidth;landing.classList.add('revealing');
+  // The unlocked song continues through the fracture.
+  const beginning=performance.now(),duration=1630;
+  const reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function frame(now){
+   if(generation!==transitionGeneration)return;
+   const p=Math.min(1,(now-beginning)/duration);
+   draw.clearRect(0,0,w,h);
+   if(reduced){fractureCanvas.hidden=true;landing.classList.remove('revealing');sequenceActive=false;finishIntegration();return}
+   for(const t of tiles){
+     let u=Math.max(0,Math.min(1,(p-t.delay)/(1-t.delay)));
+     const ease=1-Math.pow(1-u,2.65);
+     const alpha=u<.12?1:Math.max(0,(1-u)/.88);
+     if(alpha<.008)continue;
+     const mx=t.x+t.w*.5, my=t.y+t.h*.5;
+     draw.save();draw.globalAlpha=alpha;draw.translate(mx+t.dx*ease,my+t.dy*ease);
+     draw.rotate(t.spin*ease);draw.scale(1-u*.25,1-u*.25);
+     draw.drawImage(still,t.x*scale,t.y*scale,t.w*scale,t.h*scale,-t.w*.5,-t.h*.5,t.w,t.h);
+     if(t.tint&&u>.14&&u<.72){draw.strokeStyle=`rgba(255,130,204,${(1-u)*.6})`;draw.lineWidth=1;draw.strokeRect(-t.w/2,-t.h/2,t.w,t.h)}
+     draw.restore();
+   }
+   if(p<.19){draw.fillStyle=`rgba(255,239,249,${Math.pow(1-p/.19,4)*.85})`;draw.fillRect(0,0,w,h)}
+   if(p<1){fractureRaf=requestAnimationFrame(frame)}else{
+    fractureCanvas.hidden=true;landing.classList.remove('revealing');sequenceActive=false;finishIntegration();
+   }
+  }
+  fractureRaf=requestAnimationFrame(frame);
+ }
+
+ function takePhoto(){if(!active||!ready)return;ready=false;shutter.disabled=true;audioContext();doFlash();const w=arena.clientWidth,h=arena.clientHeight,dist=Math.hypot((ax-tx)*w,(ay-ty)*h);const hit=dist<Math.min(84,Math.max(60,w*.18));if(hit){const shot=n;n++;updateProgress();musicForShot(shot);temporaryMessage('✦ SHOT '+String(n).padStart(2,'0')+' UNLOCKED ✦');seed+=1.37;if(n===4){playFinale();return}}else{clickSound();temporaryMessage('✕ MISSED — TRY AGAIN')}setTimeout(()=>{ready=true;shutter.disabled=false},470)}
+ function start(){cleanSequence();stopSample();hideFinale();clearFracture();show('game');n=0;active=true;ready=true;seed=0;ax=.45;ay=.66;aim.style.left='45%';aim.style.top='66%';feedback.textContent='';shutter.disabled=false;$('hintTitle').textContent='FIND THE LIGHT';$('hintText').textContent='Move the viewfinder and tap it when it turns pink.';updateProgress();audioContext();startedAt=performance.now();cancelAnimationFrame(raf);raf=requestAnimationFrame(draw)}
+ function skip(){cleanSequence();active=false;cancelAnimationFrame(raf);stopSample();hideFinale();clearFracture();show('landing');finishIntegration()}
+ $('start').addEventListener('click',start);$('skipIntro').addEventListener('click',skip);$('replay').addEventListener('click',start);shutter.addEventListener('click',takePhoto);aim.addEventListener('click',e=>{e.stopPropagation();if(performance.now()-lastAimShot>450)takePhoto()});$('preview').addEventListener('click',()=>{const c=audioContext();if(!c)return;stopSample();prepareFinale().then(buffer=>{if(!buffer||!soundOn)return;const source=c.createBufferSource();source.buffer=buffer;source.connect(c.destination);musicSources.add(source);source.onended=()=>musicSources.delete(source);source.start()})});initThumbs();initShotAudios();
+ $('sound').addEventListener('click',()=>{soundOn=!soundOn;muted=!soundOn;$('sound').textContent=soundOn?'♫ Sound: ON':'♫ Sound: OFF';$('sound').setAttribute('aria-pressed',String(muted));if(!soundOn)stopSample();else audioContext()});
+ $('upload')?.addEventListener('change',e=>{const file=e.target.files&&e.target.files[0];if(!file)return;stopSample();if(audioUrl)URL.revokeObjectURL(audioUrl);audioUrl=URL.createObjectURL(file);userAudio=new Audio(audioUrl);userAudio.preload='auto';$('filename').textContent='✓ '+file.name+' (archivo local)'});
+ function finishIntegration(){document.body.classList.remove('integrated-fracture');document.body.classList.add('reward-mode');parent.postMessage({type:'pixel-perfect-complete'},location.origin);prepareReward()}
+ const resizeRewards=new ResizeObserver(()=>{if(document.body.classList.contains('reward-mode'))parent.postMessage({type:'pixel-perfect-height',height:document.querySelector('.shell').getBoundingClientRect().height},location.origin)});resizeRewards.observe(document.querySelector('.shell'));
+ let postcardPromise=null,postcardFile=null,previewUrl=null,previewVersion=0;
+ function createPostcard(){if(postcardPromise)return postcardPromise;postcardPromise=(async()=>{
+  if(!posterImg.complete)await new Promise((resolve,reject)=>{posterImg.addEventListener('load',resolve,{once:true});posterImg.addEventListener('error',reject,{once:true})});
+  if(!posterImg.naturalWidth)throw Error('cover');
+  const canvas=document.createElement('canvas');canvas.width=540;canvas.height=675;const g=canvas.getContext('2d');g.scale(.5,.5);
+  g.fillStyle='#100b16';g.fillRect(0,0,1080,1350);g.strokeStyle='#f78acb22';g.lineWidth=1;for(let x=0;x<1080;x+=72){g.beginPath();g.moveTo(x,0);g.lineTo(x,1350);g.stroke()}for(let y=0;y<1350;y+=72){g.beginPath();g.moveTo(0,y);g.lineTo(1080,y);g.stroke()}
+  g.fillStyle='#f69dce';g.font='24px monospace';g.fillText('PIXEL PERFECT / FLASH HUNT',72,78);
+  g.save();g.translate(540,655);g.rotate(-.035);g.shadowColor='#f65db540';g.shadowBlur=45;g.fillStyle='#f5e9f0';g.fillRect(-459,-509,918,1100);g.shadowBlur=0;
+  const imageSize=Math.min(posterImg.naturalWidth,posterImg.naturalHeight);g.drawImage(posterImg,(posterImg.naturalWidth-imageSize)/2,(posterImg.naturalHeight-imageSize)/2,imageSize,imageSize,-423,-473,846,846);
+  g.fillStyle='#281325';g.font='italic 900 66px system-ui';g.fillText('PERFECT SHOT',-408,470);const fanName=$('fanName').value.trim().replace(/\s+/g,' ');if(fanName){const dedication='For '+fanName+' with love, Diana Mae';let size=42;g.fillStyle='#913964';do{g.font='italic '+size+'px "Segoe Script", "Brush Script MT", cursive';if(g.measureText(dedication).width<=680)break;size--}while(size>17);g.fillText(dedication,-405,533)}else{g.font='22px monospace';g.fillText('FOUR FRAGMENTS / ONE SONG',-405,521);}
+  g.save();g.translate(318,452);g.rotate(.12);g.strokeStyle='#bc367b';g.lineWidth=4;g.strokeRect(-76,-48,152,96);g.fillStyle='#bc367b';g.textAlign='center';g.font='bold 35px monospace';g.fillText('004',0,-1);g.font='15px monospace';g.fillText('UNLOCKED',0,27);g.restore();g.restore();
+  g.fillStyle='#ffc3e5';g.font='26px monospace';g.textAlign='center';g.fillText('✦ YOU CAUGHT THE LIGHT ✦',540,1280);
+  return await new Promise((resolve,reject)=>canvas.toBlob(blob=>blob?resolve(blob):reject(Error('export')),'image/png'));
+ })().catch(error=>{postcardPromise=null;throw error});return postcardPromise}
+ function downloadPostcard(blob){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='pixel-perfect-perfect-shot-004.png';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000)}
+ const rewardStatus=$('rewardStatus');
+ async function prepareReward(){const version=++previewVersion;try{const blob=await createPostcard();if(version!==previewVersion)return;postcardFile=new File([blob],'pixel-perfect-perfect-shot-004.png',{type:'image/png'});const next=URL.createObjectURL(blob);$('rewardPreview').src=next;$('rewardPreview').hidden=false;if(previewUrl)URL.revokeObjectURL(previewUrl);previewUrl=next}catch(error){rewardStatus.textContent='Could not prepare your photo. Please try again.'}}
+ $('fanName').addEventListener('input',()=>{postcardPromise=null;postcardFile=null;prepareReward()});
+ new MutationObserver(()=>{if(!landing.hidden)prepareReward()}).observe(landing,{attributes:true,attributeFilter:['hidden']});
+ $('savePhoto').addEventListener('click',async()=>{const button=$('savePhoto');button.disabled=true;try{downloadPostcard(await createPostcard());rewardStatus.textContent='Your postcard is ready to save and share ✦'}catch(error){rewardStatus.textContent='Could not save your photo. Please try again.'}finally{button.disabled=false}});
+ const shareDialog=$('shareDialog'),liveGame=/^https?:$/.test(location.protocol),gameUrl=liveGame?new URL('/pixel-perfect',location.origin).href:null;
+ function openShareOptions(){ $('shareWhatsapp').hidden=!liveGame;$('copyGameLink').hidden=!liveGame;$('shareWhatsapp').href=liveGame?'https://wa.me/?text='+encodeURIComponent('¿Puedes desbloquear Pixel Perfect? ✦ '+gameUrl):'';$('shareHelp').textContent=liveGame?'Invite a friend to play, or save your postcard to share in your stories.':'Guarda tu postal y compártela desde tu galería. Cuando el juego esté publicado, también podrás enviar su enlace.';$('shareDialogStatus').textContent='';shareDialog.showModal()}
+ $('closeShare').addEventListener('click',()=>shareDialog.close());
+ $('shareSave').addEventListener('click',()=>{$('savePhoto').click();$('shareDialogStatus').textContent='Save your postcard and share it from your gallery ♡'});
+ $('copyGameLink').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(gameUrl);$('shareDialogStatus').textContent='Link copied ✦'}catch(error){$('shareDialogStatus').textContent=gameUrl}});
+ $('shareExperience').addEventListener('click',()=>{
+  const title='Pixel Perfect — Flash Hunt',text='Capturé los cuatro fragmentos ✦ ¿Puedes desbloquear Pixel Perfect?';
+  let payload=null;if(liveGame)payload={title,text,url:gameUrl};else if(postcardFile&&navigator.canShare&&navigator.canShare({files:[postcardFile]}))payload={title,text,files:[postcardFile]};
+  // Call the native share sheet directly during the tap, without awaiting rendering.
+  if(payload&&navigator.share){try{navigator.share(payload).then(()=>rewardStatus.textContent='Thanks for sharing ♡').catch(error=>{if(error.name!=='AbortError')openShareOptions()})}catch(error){openShareOptions()}}else openShareOptions();
+ });
+ window.addEventListener('keydown',e=>{if(game.hidden||!active)return;if(e.code==='Space'||e.code==='Enter'&&document.activeElement===arena){e.preventDefault();takePhoto()}if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.code)){e.preventDefault();const step=.035;ax=Math.max(.12,Math.min(.88,ax+(e.code==='ArrowLeft'?-step:e.code==='ArrowRight'?step:0)));ay=Math.max(.13,Math.min(.85,ay+(e.code==='ArrowUp'?-step:e.code==='ArrowDown'?step:0)));aim.style.left=(ax*100)+'%';aim.style.top=(ay*100)+'%'}});
+})();
+</script>
+</body>
+</html>
+

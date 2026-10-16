@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import ReleaseLanding from "./release-landing";
+import FlashHuntExperience from "./flash-hunt-experience";
 
 export const viewport: Viewport = { viewportFit: "cover" };
 
@@ -28,5 +28,5 @@ export const metadata: Metadata = {
 };
 
 export default function PixelPerfectPage() {
-  return <ReleaseLanding />;
+  return <FlashHuntExperience />;
 }
