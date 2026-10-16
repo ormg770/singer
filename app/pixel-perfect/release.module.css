@@ -966,57 +966,60 @@
   }
 }
 
-/* Clip the comet to a two-pixel ring so its tail bends at every corner. */
-@property --cta-orbit-angle {
-  syntax: "<angle>";
-  initial-value: 0deg;
-  inherits: false;
-}
-.ctaGlow::after {
-  content: "";
+/* SVG measures distance along the actual rectangle, including its corners. */
+.borderLight {
   position: absolute;
+  inset: -1px;
+  width: calc(100% + 2px);
+  height: calc(100% + 2px);
+  overflow: visible;
   z-index: 2;
-  inset: -2px;
-  padding: 2px;
-  border-radius: 3px;
-  background: conic-gradient(
-    from var(--cta-orbit-angle),
-    transparent 0deg 300deg,
-    #ff68bc40 320deg,
-    #ffb0df 343deg,
-    #fff 355deg 359deg,
-    transparent 360deg
-  );
-  -webkit-mask:
-    linear-gradient(#fff 0 0) content-box,
-    linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask:
-    linear-gradient(#fff 0 0) content-box,
-    linear-gradient(#fff 0 0);
-  mask-composite: exclude;
-  opacity: 0;
   pointer-events: none;
+  display: none;
 }
-.page[data-effects="on"] .ctaGlow::after {
+.borderLight rect {
+  fill: none;
+  stroke-width: 2px;
+  stroke-linecap: round;
+  stroke: #ff91ce;
+  stroke-dasharray: 8 92;
+  opacity: 0.35;
+}
+.borderLight rect:nth-child(2) {
+  stroke: #ffcbeb;
+  stroke-dasharray: 4 96;
+  opacity: 0.8;
+}
+.borderLight rect:nth-child(3) {
+  stroke: #fff;
+  stroke-dasharray: 0.8 99.2;
   opacity: 1;
-  animation: border-orbit 6s linear infinite;
 }
-@keyframes border-orbit {
+.page[data-effects="on"] .borderLight {
+  display: block;
+}
+.page[data-effects="on"] .borderLight rect {
+  animation: border-distance 4.5s linear infinite;
+}
+@keyframes border-distance {
+  from {
+    stroke-dashoffset: 0;
+  }
   to {
-    --cta-orbit-angle: 360deg;
+    stroke-dashoffset: 100;
   }
 }
-.page:has(.cameraScene[data-flashing]) .ctaGlow::after {
+.page:has(.cameraScene[data-flashing]) .borderLight rect {
   animation-play-state: paused;
 }
-.page[data-effects="off"] .ctaGlow::after {
-  animation: none;
-  opacity: 0;
+.page[data-effects="off"] .borderLight {
+  display: none;
 }
 @media (prefers-reduced-motion: reduce) {
-  .page .ctaGlow::after {
-    display: none;
+  .page .borderLight {
+    display: none !important;
+  }
+  .page .borderLight rect {
     animation: none !important;
   }
 }

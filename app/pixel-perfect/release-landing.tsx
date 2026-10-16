@@ -17,6 +17,16 @@ const getReducedMotion = () =>
   window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const serverReducedMotion = () => true;
 
+function BorderLight() {
+  return (
+    <svg className={styles.borderLight} aria-hidden="true" focusable="false">
+      <rect width="100%" height="100%" rx="3" pathLength="100" />
+      <rect width="100%" height="100%" rx="3" pathLength="100" />
+      <rect width="100%" height="100%" rx="3" pathLength="100" />
+    </svg>
+  );
+}
+
 export default function ReleaseLanding() {
   const [countdown, setCountdown] = useState<ReturnType<
     typeof getCountdown
@@ -304,6 +314,7 @@ export default function ReleaseLanding() {
               : "COUNTING DOWN TO A NEW FREQUENCY"}
           </p>
           <div className={styles.ctaGlow}>
+            <BorderLight />
             <a
               id="presave"
               ref={ctaRef}
@@ -426,6 +437,7 @@ export default function ReleaseLanding() {
       {stickyVisible && (
         <aside className={styles.stickyBar} aria-label="Release shortcut">
           <div className={styles.ctaGlow}>
+            <BorderLight />
             <a
               href={PRE_SAVE_URL}
               target="_blank"
