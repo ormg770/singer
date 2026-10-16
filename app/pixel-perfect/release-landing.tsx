@@ -303,19 +303,21 @@ export default function ReleaseLanding() {
               ? "The wait is over. Pixel Perfect is here."
               : "COUNTING DOWN TO A NEW FREQUENCY"}
           </p>
-          <a
-            id="presave"
-            ref={ctaRef}
-            href={PRE_SAVE_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={() => trackClick("hero")}
-            className={styles.cta}
-          >
-            <span>{ctaLabel}</span>
-            <ArrowUpRight size={23} aria-hidden="true" />
-            <span className={styles.srOnly}> (opens in a new tab)</span>
-          </a>
+          <div className={styles.ctaGlow}>
+            <a
+              id="presave"
+              ref={ctaRef}
+              href={PRE_SAVE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => trackClick("hero")}
+              className={styles.cta}
+            >
+              <span>{ctaLabel}</span>
+              <ArrowUpRight size={23} aria-hidden="true" />
+              <span className={styles.srOnly}> (opens in a new tab)</span>
+            </a>
+          </div>
           <p className={styles.ctaNote}>
             {countdown?.released
               ? "Choose your music service."
@@ -423,17 +425,19 @@ export default function ReleaseLanding() {
       </footer>
       {stickyVisible && (
         <aside className={styles.stickyBar} aria-label="Release shortcut">
-          <a
-            href={PRE_SAVE_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={() => trackClick("sticky")}
-            className={styles.cta}
-          >
-            <span>{ctaLabel}</span>
-            <ArrowUpRight size={21} aria-hidden="true" />
-            <span className={styles.srOnly}> (opens in a new tab)</span>
-          </a>
+          <div className={styles.ctaGlow}>
+            <a
+              href={PRE_SAVE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => trackClick("sticky")}
+              className={styles.cta}
+            >
+              <span>{ctaLabel}</span>
+              <ArrowUpRight size={21} aria-hidden="true" />
+              <span className={styles.srOnly}> (opens in a new tab)</span>
+            </a>
+          </div>
         </aside>
       )}
     </main>

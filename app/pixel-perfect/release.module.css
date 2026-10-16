@@ -912,3 +912,56 @@
     flex-shrink: 0;
   }
 }
+
+/* Exterior glow uses its own layer so the button's clipped sheen stays inside. */
+.ctaGlow {
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  max-width: 440px;
+}
+.ctaGlow::before {
+  content: "";
+  position: absolute;
+  inset: 3px;
+  z-index: -1;
+  border-radius: 4px;
+  box-shadow:
+    0 0 18px 7px #ff68bc66,
+    0 0 34px 12px #ff68bc26;
+  opacity: 0;
+  pointer-events: none;
+}
+.page[data-effects="on"] .ctaGlow::before {
+  animation: pink-halo 5s ease-in-out infinite;
+}
+@keyframes pink-halo {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.95;
+    transform: scale(1.02);
+  }
+}
+.page:has(.cameraScene[data-flashing]) .ctaGlow::before {
+  animation-play-state: paused;
+}
+.page[data-effects="off"] .ctaGlow::before {
+  animation: none;
+  opacity: 0;
+}
+@media (max-width: 760px) {
+  .ctaGlow {
+    order: 7;
+    max-width: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .page .ctaGlow::before {
+    display: none;
+    animation: none !important;
+  }
+}
