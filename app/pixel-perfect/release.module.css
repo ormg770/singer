@@ -1009,9 +1009,7 @@
     stroke-dashoffset: 100;
   }
 }
-.page:has(.cameraScene[data-flashing]) .borderLight rect {
-  animation-play-state: paused;
-}
+
 .page[data-effects="off"] .borderLight {
   display: none;
 }
