@@ -505,7 +505,7 @@
     font-size: 25px;
   }
 }
-/* Local camera glints: one short pulse every few seconds, never a screen wash. */
+/* Alternating paparazzi flashes, with a lingering blue lens halo. */
 .cameraFlashes {
   position: absolute;
   inset: -12px;
@@ -514,46 +514,49 @@
 }
 .cameraFlash {
   position: absolute;
-  left: 0;
+  left: 3%;
   top: 20%;
-  width: clamp(70px, 9vw, 120px);
+  width: clamp(200px, 24vw, 340px);
   aspect-ratio: 1;
   opacity: 0;
-  background: radial-gradient(circle, #fff 0 2%, #e7f5ffb3 4%, #8ecbff40 12%, #8ecbff0d 35%, transparent 65%);
-  animation: camera-flash 12s linear infinite;
-  animation-delay: 1.5s;
-  transform: translate(-50%, -50%) scale(.8);
+  background: radial-gradient(circle, #fff 0 3%, #f1fcff 5%, #c1eaffdd 9%, #72baff88 19%, #477fff33 37%, transparent 68%);
+  filter: drop-shadow(0 0 16px #b0e7ff);
+  mix-blend-mode: screen;
+  animation: camera-flash 9s ease-out infinite;
+  animation-delay: .7s;
+  transform: translate(-50%, -50%) scale(.65);
 }
 .cameraFlash::before,
 .cameraFlash::after {
   content: "";
   position: absolute;
-  inset: 49% 10%;
-  background: linear-gradient(90deg, transparent, #eaf7ffcc, transparent);
+  inset: 49.4% -24%;
+  background: linear-gradient(90deg, transparent, #84caff66 18%, #fff 48% 52%, #84caff66 82%, transparent);
+  box-shadow: 0 0 12px #c1eaff88;
 }
 .cameraFlash::after {
-  transform: rotate(90deg);
+  transform: rotate(90deg) scaleX(.7);
 }
 .cameraFlash:nth-child(2) {
-  left: 100%;
+  left: 97%;
   top: 48%;
-  animation-delay: 5.5s;
+  animation-delay: 3.7s;
 }
 .cameraFlash:nth-child(3) {
   left: 82%;
-  top: 100%;
-  animation-delay: 9.5s;
+  top: 93%;
+  animation-delay: 6.7s;
 }
 @keyframes camera-flash {
-  0%, 4%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(.8); }
-  1% { opacity: .7; transform: translate(-50%, -50%) scale(1); }
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(.65); }
+  2% { opacity: 1; transform: translate(-50%, -50%) scale(1.05); }
+  7% { opacity: .35; transform: translate(-50%, -50%) scale(1); }
+  16%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(1.2); }
 }
 @media (max-width: 760px) {
-  .cameraFlash { width: 64px; }
-  @keyframes camera-flash {
-    0%, 4%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(.8); }
-    1% { opacity: .4; transform: translate(-50%, -50%) scale(1); }
-  }
+  .cameraFlash { width: 180px; }
+  .cameraFlash::before,
+  .cameraFlash::after { inset-inline: -8%; }
 }
 @media (prefers-reduced-motion: reduce) {
   .cameraFlashes {
