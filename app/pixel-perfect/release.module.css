@@ -912,3 +912,112 @@
     flex-shrink: 0;
   }
 }
+
+/* Exterior glow uses its own layer so the button's clipped sheen stays inside. */
+.ctaGlow {
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  max-width: 440px;
+}
+.ctaGlow::before {
+  content: "";
+  position: absolute;
+  inset: 3px;
+  z-index: -1;
+  border-radius: 4px;
+  box-shadow:
+    0 0 18px 7px #ff68bc66,
+    0 0 34px 12px #ff68bc26;
+  opacity: 0;
+  pointer-events: none;
+}
+.page[data-effects="on"] .ctaGlow::before {
+  animation: pink-halo 5s ease-in-out infinite;
+}
+@keyframes pink-halo {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.95;
+    transform: scale(1.02);
+  }
+}
+.page:has(.cameraScene[data-flashing]) .ctaGlow::before {
+  animation-play-state: paused;
+}
+.page[data-effects="off"] .ctaGlow::before {
+  animation: none;
+  opacity: 0;
+}
+@media (max-width: 760px) {
+  .ctaGlow {
+    order: 7;
+    max-width: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .page .ctaGlow::before {
+    display: none;
+    animation: none !important;
+  }
+}
+
+/* SVG measures distance along the actual rectangle, including its corners. */
+.borderLight {
+  position: absolute;
+  inset: -1px;
+  width: calc(100% + 2px);
+  height: calc(100% + 2px);
+  overflow: visible;
+  z-index: 2;
+  pointer-events: none;
+  display: none;
+}
+.borderLight rect {
+  fill: none;
+  stroke-width: 2px;
+  stroke-linecap: round;
+  stroke: #ff91ce;
+  stroke-dasharray: 8 92;
+  opacity: 0.35;
+}
+.borderLight rect:nth-child(2) {
+  stroke: #ffcbeb;
+  stroke-dasharray: 4 96;
+  opacity: 0.8;
+}
+.borderLight rect:nth-child(3) {
+  stroke: #fff;
+  stroke-dasharray: 0.8 99.2;
+  opacity: 1;
+}
+.page[data-effects="on"] .borderLight {
+  display: block;
+}
+.page[data-effects="on"] .borderLight rect {
+  animation: border-distance 4.5s linear infinite;
+}
+@keyframes border-distance {
+  from {
+    stroke-dashoffset: 0;
+  }
+  to {
+    stroke-dashoffset: 100;
+  }
+}
+
+.page[data-effects="off"] .borderLight {
+  display: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .page .borderLight {
+    display: none !important;
+  }
+  .page .borderLight rect {
+    animation: none !important;
+  }
+}
