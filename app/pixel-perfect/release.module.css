@@ -971,19 +971,21 @@
   content: "";
   position: absolute;
   z-index: 2;
-  width: 64px;
-  height: 4px;
+  width: 88px;
+  height: 2px;
   border-radius: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    #ffe3f4 45%,
-    #fff 55%,
-    transparent
-  );
-  box-shadow:
-    0 0 8px 3px #ff68bc,
-    0 0 18px 5px #ff68bc80;
+  background:
+    radial-gradient(ellipse 3px 1px at 94% 50%, #fff 25%, #fff0 100%),
+    linear-gradient(
+      90deg,
+      transparent,
+      #ff68bc33 25%,
+      #ff91ce88 65%,
+      #ffe3f4 92%,
+      #fff 95%,
+      transparent
+    );
+  filter: drop-shadow(0 0 2px #ffb8df) drop-shadow(0 0 4px #ff68bc88);
   offset-path: inset(-2px round 2px);
   offset-distance: 0%;
   offset-rotate: auto;
