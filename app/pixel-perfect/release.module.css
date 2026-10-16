@@ -966,29 +966,35 @@
   }
 }
 
-/* A highlight travels around the exterior edge without moving the CTA. */
+/* Clip the comet to a two-pixel ring so its tail bends at every corner. */
+@property --cta-orbit-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
 .ctaGlow::after {
   content: "";
   position: absolute;
   z-index: 2;
-  width: 88px;
-  height: 2px;
-  border-radius: 100%;
-  background:
-    radial-gradient(ellipse 3px 1px at 94% 50%, #fff 25%, #fff0 100%),
-    linear-gradient(
-      90deg,
-      transparent,
-      #ff68bc33 25%,
-      #ff91ce88 65%,
-      #ffe3f4 92%,
-      #fff 95%,
-      transparent
-    );
-  filter: drop-shadow(0 0 2px #ffb8df) drop-shadow(0 0 4px #ff68bc88);
-  offset-path: inset(-2px round 2px);
-  offset-distance: 0%;
-  offset-rotate: auto;
+  inset: -2px;
+  padding: 2px;
+  border-radius: 3px;
+  background: conic-gradient(
+    from var(--cta-orbit-angle),
+    transparent 0deg 300deg,
+    #ff68bc40 320deg,
+    #ffb0df 343deg,
+    #fff 355deg 359deg,
+    transparent 360deg
+  );
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
   opacity: 0;
   pointer-events: none;
 }
@@ -998,7 +1004,7 @@
 }
 @keyframes border-orbit {
   to {
-    offset-distance: 100%;
+    --cta-orbit-angle: 360deg;
   }
 }
 .page:has(.cameraScene[data-flashing]) .ctaGlow::after {
