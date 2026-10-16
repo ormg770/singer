@@ -21,7 +21,7 @@ export default function ReleaseLanding() {
   const [countdown, setCountdown] = useState<ReturnType<
     typeof getCountdown
   > | null>(null);
-  const [stickyVisible, setStickyVisible] = useState(false);
+  const [stickyVisible, setStickyVisible] = useState(true);
   const [photos, setPhotos] = useState(0);
   const [effectsEnabled, setEffectsEnabled] = useState(true);
   const reducedMotion = useSyncExternalStore(
@@ -48,13 +48,9 @@ export default function ReleaseLanding() {
   useEffect(() => {
     // Hide the sticky CTA as soon as any part of the main CTA is visible.
     const update = () => {
-      const title = titleRef.current?.getBoundingClientRect();
       const cta = ctaRef.current?.getBoundingClientRect();
-      if (title && cta)
-        setStickyVisible(
-          title.bottom <= 0 &&
-            !(cta.bottom > 0 && cta.top < window.innerHeight),
-        );
+      // Present from first paint, then stop before the main CTA and footer.
+      if (cta) setStickyVisible(cta.top >= window.innerHeight);
     };
     let frame = 0;
     const onScroll = () => {
@@ -113,7 +109,11 @@ export default function ReleaseLanding() {
       lastFlash = now;
       scene.dataset.flashing = "true";
       animate(
-        glints[index++ % glints.length],
+        glints[
+          (index =
+            (index + 1 + Math.floor(Math.random() * (glints.length - 1))) %
+            glints.length)
+        ],
         [
           { opacity: 0, transform: "translate(-50%, -50%) scale(.65)" },
           {
@@ -319,7 +319,7 @@ export default function ReleaseLanding() {
           <p className={styles.ctaNote}>
             {countdown?.released
               ? "Choose your music service."
-              : "Save it now. Make it yours on release day."}
+              : "Pre-save now. Yours on release day."}
           </p>
         </div>
         <figure className={styles.artwork}>
@@ -337,6 +337,9 @@ export default function ReleaseLanding() {
               <div className={styles.frameTop}>
                 <span>PIXEL_PERFECT / 001</span>
                 <span>26.10.26</span>
+                <span className={styles.recording} aria-hidden="true">
+                  <span /> REC
+                </span>
               </div>
               <div className={styles.photoArea}>
                 <Image
@@ -364,9 +367,6 @@ export default function ReleaseLanding() {
                     <i />
                     <i />
                     <i />
-                  </span>
-                  <span className={styles.recording} aria-hidden="true">
-                    <span /> REC
                   </span>
                 </button>
               </div>
@@ -401,7 +401,7 @@ export default function ReleaseLanding() {
               disabled={reducedMotion}
               onClick={() => setEffectsEnabled((value) => !value)}
             >
-              {effects ? "Effects on" : "Effects off"}
+              {effects ? "Effects: on" : "Effects: off"}
             </button>
           </div>
         </figure>

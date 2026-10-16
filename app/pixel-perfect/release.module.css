@@ -746,3 +746,169 @@
     transform: none;
   }
 }
+
+/* Round two: CTA hierarchy and a clean cover. */
+.cta {
+  position: relative;
+  overflow: hidden;
+  min-height: 70px;
+  font-size: 16px;
+  font-weight: 900;
+  letter-spacing: 0.03em;
+  transition: transform 0.15s;
+}
+.cta::after {
+  content: "";
+  position: absolute;
+  inset: -40% auto -40% -40%;
+  width: 28%;
+  background: linear-gradient(110deg, transparent, #ffffff38, transparent);
+  opacity: 0;
+  transform: translateX(0) skewX(-15deg);
+  pointer-events: none;
+}
+.page[data-effects="on"] .cta::after {
+  animation: cta-sheen 5s ease-in-out infinite;
+}
+@keyframes cta-sheen {
+  0%,
+  12% {
+    opacity: 0;
+    transform: translateX(0) skewX(-15deg);
+  }
+  16% {
+    opacity: 0.8;
+  }
+  34% {
+    opacity: 0.8;
+    transform: translateX(650%) skewX(-15deg);
+  }
+  38%,
+  100% {
+    opacity: 0;
+    transform: translateX(650%) skewX(-15deg);
+  }
+}
+.page:has(.cameraScene[data-flashing]) .cta::after {
+  animation-play-state: paused;
+}
+.page[data-effects="off"] .cta::after {
+  animation: none;
+  opacity: 0;
+}
+.cta:hover {
+  transform: scale(1.01);
+}
+.cta:active {
+  transform: scale(0.98);
+}
+.cta:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 5px;
+}
+.ctaNote {
+  text-wrap: balance;
+}
+.recording {
+  position: static;
+  padding: 0;
+  background: transparent;
+}
+.frameTop {
+  align-items: center;
+}
+.focusCorners {
+  inset: -6px;
+}
+.focusCorners i {
+  width: 10px;
+  height: 10px;
+}
+.sticker {
+  width: 64px;
+  height: 64px;
+  font-size: 22px;
+  bottom: -6px;
+  left: -18px;
+  background: #e997c4;
+}
+.sticker span {
+  font-size: 10px;
+}
+.frameBottom {
+  padding-left: 64px;
+}
+.cameraCaption {
+  margin-top: 30px;
+  row-gap: 12px;
+}
+.artControls {
+  margin-top: 14px;
+  row-gap: 12px;
+}
+.effectsToggle {
+  border: 0;
+  background: transparent;
+  padding: 8px 0;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  color: var(--muted);
+}
+.effectsToggle:disabled {
+  text-decoration: none;
+}
+@media (max-width: 760px) {
+  .page {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  .cta {
+    min-height: 68px;
+    font-size: 15px;
+    padding: 18px 16px;
+  }
+  .sticker {
+    width: 56px;
+    height: 56px;
+    font-size: 20px;
+    left: -14px;
+  }
+  .sticker span {
+    font-size: 9px;
+  }
+  .frameBottom {
+    padding-left: 55px;
+  }
+  .frameBottom > span:last-child {
+    max-width: none;
+    text-align: left;
+  }
+  .frameTop > span:first-child {
+    flex-basis: 100%;
+  }
+  .artControls {
+    margin-top: 16px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .page .cta::after {
+    animation: none !important;
+    opacity: 0;
+  }
+  .cta:hover {
+    transform: none;
+  }
+}
+
+@media (max-width: 760px) {
+  .cta {
+    font-size: clamp(14px, 3.9vw, 16px);
+    letter-spacing: 0.01em;
+    gap: 8px;
+  }
+  .cta > span:first-child {
+    white-space: nowrap;
+  }
+  .cta > svg {
+    flex-shrink: 0;
+  }
+}
