@@ -965,3 +965,50 @@
     animation: none !important;
   }
 }
+
+/* A highlight travels around the exterior edge without moving the CTA. */
+.ctaGlow::after {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  width: 64px;
+  height: 4px;
+  border-radius: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    #ffe3f4 45%,
+    #fff 55%,
+    transparent
+  );
+  box-shadow:
+    0 0 8px 3px #ff68bc,
+    0 0 18px 5px #ff68bc80;
+  offset-path: inset(-2px round 2px);
+  offset-distance: 0%;
+  offset-rotate: auto;
+  opacity: 0;
+  pointer-events: none;
+}
+.page[data-effects="on"] .ctaGlow::after {
+  opacity: 1;
+  animation: border-orbit 6s linear infinite;
+}
+@keyframes border-orbit {
+  to {
+    offset-distance: 100%;
+  }
+}
+.page:has(.cameraScene[data-flashing]) .ctaGlow::after {
+  animation-play-state: paused;
+}
+.page[data-effects="off"] .ctaGlow::after {
+  animation: none;
+  opacity: 0;
+}
+@media (prefers-reduced-motion: reduce) {
+  .page .ctaGlow::after {
+    display: none;
+    animation: none !important;
+  }
+}
