@@ -94,7 +94,8 @@
     "lastFlash": "LAST FLASH",
     "newSingle": "NEW SINGLE",
     "miniExperience": "FLASH HUNT / MINI EXPERIENCE",
-    "presents": "DIANA MAE PRESENTS"
+    "presents": "DIANA MAE PRESENTS",
+    "instructionsTouch": "Tap the light to aim. Tap the viewfinder or shutter to capture."
   },
   "es": {
     "official": "Sitio oficial",
@@ -148,7 +149,7 @@
     "soundOff": "♫ Sonido: NO",
     "captures": "Fotos capturadas",
     "arena": "Zona de juego. Toca una luz para apuntar. Usa las flechas para mover y el espacio para disparar.",
-    "shutter": "Hacer una foto",
+    "shutter": "Tomar foto",
     "last": "ÚLTIMO FLASH / 004",
     "fragments": "CUATRO FRAGMENTOS / UNA CANCIÓN",
     "revealing": "DESCUBRIENDO PIXEL PERFECT…",
@@ -191,6 +192,7 @@
     "lastFlash": "ÚLTIMO FLASH",
     "newSingle": "NUEVO SENCILLO",
     "miniExperience": "FLASH HUNT / MINIEXPERIENCIA",
-    "presents": "DIANA MAE PRESENTA"
+    "presents": "DIANA MAE PRESENTA",
+    "instructionsTouch": "Toca la luz para apuntar. Toca el visor o el obturador para hacer tu foto."
   }
 }

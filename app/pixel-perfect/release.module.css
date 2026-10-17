@@ -1241,3 +1241,78 @@
     box-shadow: 5px 6px 0 #6e3266;
   }
 }
+
+@property --pp-cta-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+@keyframes pp-cta-orbit {
+  0% {
+    --pp-cta-angle: 0deg;
+  }
+  55% {
+    --pp-cta-angle: 360deg;
+  }
+  100% {
+    --pp-cta-angle: 360deg;
+  }
+}
+
+/* A masked rim is always inside the actual clickable button, never its shadow. */
+.page .cta::after,
+.page .ctaGlow::before {
+  display: none !important;
+  animation: none !important;
+}
+.page[data-effects="on"] .cta {
+  outline: none;
+  box-shadow: 5px 6px 0 #6e3266;
+}
+.cta::before {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  padding: 2px;
+  box-sizing: border-box;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(120deg, #ffe5f1aa, #ff99cf44);
+  opacity: 0.45;
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+}
+.page[data-orbit="on"] .cta::before {
+  background: conic-gradient(
+    from var(--pp-cta-angle),
+    transparent 0deg 300deg,
+    #ffb5da15 310deg,
+    #ffd3e977 332deg,
+    #fff1f9 354deg,
+    #fff 359deg,
+    transparent 360deg
+  );
+  opacity: 1;
+}
+.page[data-orbit="on"][data-effects="on"] .cta::before {
+  animation: pp-cta-orbit 7s linear infinite;
+}
+.page:has(.cameraScene[data-flashing]) .cta::before {
+  animation-play-state: paused;
+}
+.page[data-effects="off"] .cta::before {
+  animation: none;
+  opacity: 0;
+}
+@media (prefers-reduced-motion: reduce) {
+  .page .cta::before {
+    animation: none !important;
+    opacity: 0 !important;
+  }
+}

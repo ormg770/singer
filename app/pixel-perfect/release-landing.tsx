@@ -29,6 +29,10 @@ function BorderLight() {
   );
 }
 
+const subscribeOrbit = () => () => {};
+const getOrbitSupport = () =>
+  typeof CSS !== "undefined" && typeof CSS.registerProperty === "function";
+
 export default function ReleaseLanding({
   lang,
   onLanguage,
@@ -37,6 +41,7 @@ export default function ReleaseLanding({
   reward,
   onReplay,
   onEffects,
+  onFlash,
   effectsEnabled,
   onEffectsChange,
 }: {
@@ -47,10 +52,16 @@ export default function ReleaseLanding({
   reward: ReactNode;
   onReplay: () => void;
   onEffects: (enabled: boolean) => void;
+  onFlash: (active: boolean) => void;
   effectsEnabled: boolean;
   onEffectsChange: (enabled: boolean) => void;
 }) {
   const t = copy[lang];
+  const orbitSupported = useSyncExternalStore(
+    subscribeOrbit,
+    getOrbitSupport,
+    () => false,
+  );
   const [countdown, setCountdown] = useState<ReturnType<
     typeof getCountdown
   > | null>(null);
@@ -142,6 +153,7 @@ export default function ReleaseLanding({
         return false;
       lastFlash = now;
       scene.dataset.flashing = "true";
+      onFlash(true);
       animate(
         glints[
           (index =
@@ -167,6 +179,7 @@ export default function ReleaseLanding({
       clearTimeout(settleTimer);
       settleTimer = setTimeout(() => {
         delete scene.dataset.flashing;
+        onFlash(false);
       }, 900);
       return true;
     };
@@ -211,8 +224,9 @@ export default function ReleaseLanding({
       animations.forEach((animation) => animation.cancel());
       triggerFlash.current = () => false;
       delete scene.dataset.flashing;
+      onFlash(false);
     };
-  }, [effects]);
+  }, [effects, onFlash]);
 
   useEffect(() => {
     if (!effects) return;
@@ -243,7 +257,7 @@ export default function ReleaseLanding({
       if (ticker) ticker.style.transform = "";
       if (shine) shine.style.backgroundPosition = "";
     };
-  }, [effects]);
+  }, [effects, onFlash]);
 
   function takePhoto() {
     const now = performance.now();
@@ -270,6 +284,7 @@ export default function ReleaseLanding({
       className={styles.page}
       data-effects={effects ? "on" : "off"}
       data-revealed={revealed}
+      data-orbit={orbitSupported ? "on" : "off"}
       lang={lang}
     >
       <a className={styles.skip} href="#release">
