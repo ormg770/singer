@@ -297,9 +297,6 @@ export default function ReleaseLanding({
             </button>
           ))}
         </div>
-        <button className={styles.playAgain} type="button" onClick={onReplay}>
-          {t.again}
-        </button>
       </header>
       <section
         id="release"
@@ -439,6 +436,13 @@ export default function ReleaseLanding({
             </span>
           </figcaption>
           <div className={styles.artControls}>
+            <button
+              className={styles.playAgain}
+              type="button"
+              onClick={onReplay}
+            >
+              {t.again}
+            </button>
             <a href="#presave" className={styles.artNote}>
               {t.obsession} <ArrowDown size={15} aria-hidden="true" />
             </a>

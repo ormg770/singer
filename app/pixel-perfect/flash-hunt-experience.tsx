@@ -114,7 +114,10 @@ export default function FlashHuntExperience({
         typeof d.height === "number" &&
         Number.isFinite(d.height)
       )
-        setHeight(Math.max(1, Math.min(2200, Math.ceil(d.height))));
+        setHeight((previous) => {
+          const next = Math.max(1, Math.min(2200, Math.ceil(d.height)));
+          return Math.abs(next - previous) > 2 ? next : previous;
+        });
       if (d.type === "pixel-perfect-event" && allowedEvents.has(d.name)) {
         const properties: Record<string, string | number> = {
           lang: langRef.current,
