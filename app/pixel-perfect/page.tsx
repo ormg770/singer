@@ -6,26 +6,33 @@ import FlashHuntExperience from "./flash-hunt-experience";
 export const viewport: Viewport = { viewportFit: "cover" };
 
 export const metadata: Metadata = {
-  title: "Pixel Perfect — Diana Mae",
+  title: "Diana Mae — New Music Preview",
   description:
-    "A new era. Pixel Perfect by Diana Mae. Out October 26, 2026. Pre-save now. Nuevo sencillo.",
-  alternates: { canonical: "https://dianamae.com/pixel-perfect" },
+    "Something new is coming. Listen to an exclusive short clip from Diana Mae's upcoming single.",
+  alternates: {
+    canonical: "https://www.dianamae.com/pixel-perfect",
+  },
   openGraph: {
-    title: "Pixel Perfect — Diana Mae",
-    description: "Out October 26, 2026. Pre-save now.",
-    url: "https://dianamae.com/pixel-perfect",
+    title: "Diana Mae — New Music Preview",
+    description: "Listen to a short clip. New music coming October 26, 2026.",
+    url: "https://www.dianamae.com/pixel-perfect",
+    type: "website",
     images: [
       {
-        url: "https://dianamae.com/pixel-perfect-cover-v2.jpg",
-        width: 3000,
-        height: 3000,
-        alt: "Pixel Perfect by Diana Mae — official cover",
+        url: "https://www.dianamae.com/pixel-perfect/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "Diana Mae — Listen to a short clip",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    images: ["https://dianamae.com/pixel-perfect-cover-v2.jpg"],
+    title: "Diana Mae — New Music Preview",
+    description: "Listen to a short clip.",
+    images: [
+      "https://www.dianamae.com/pixel-perfect/opengraph-image",
+    ],
   },
 };
 
