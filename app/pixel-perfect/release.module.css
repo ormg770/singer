@@ -1251,9 +1251,6 @@
   0% {
     --pp-cta-angle: 0deg;
   }
-  55% {
-    --pp-cta-angle: 360deg;
-  }
   100% {
     --pp-cta-angle: 360deg;
   }
@@ -1292,19 +1289,16 @@
   background: conic-gradient(
     from var(--pp-cta-angle),
     transparent 0deg 300deg,
-    #ffb5da15 310deg,
-    #ffd3e977 332deg,
-    #fff1f9 354deg,
+    #ffb5da66 310deg,
+    #ffe1f2dd 332deg,
+    #fff8fc 350deg,
     #fff 359deg,
     transparent 360deg
   );
   opacity: 1;
 }
 .page[data-orbit="on"][data-effects="on"] .cta::before {
-  animation: pp-cta-orbit 7s linear infinite;
-}
-.page:has(.cameraScene[data-flashing]) .cta::before {
-  animation-play-state: paused;
+  animation: pp-cta-orbit 4s linear infinite;
 }
 .page[data-effects="off"] .cta::before {
   animation: none;
