@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "https://www.dianamae.com/pixel-perfect/opengraph-image",
+        url: "https://www.dianamae.com/pixel-perfect/opengraph-image.jpg",
         width: 1200,
         height: 630,
         alt: "Diana Mae — Listen to a short clip",
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     title: "Diana Mae — New Music Preview",
     description: "Listen to a short clip.",
     images: [
-      "https://www.dianamae.com/pixel-perfect/opengraph-image",
+      "https://www.dianamae.com/pixel-perfect/opengraph-image.jpg",
     ],
   },
 };
