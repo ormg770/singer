@@ -56,10 +56,7 @@ export default function FlashHuntExperience({
       }
     } catch {}
     send({ type: "pixel-perfect-language", lang: langRef.current, copy });
-    try {
-      if (localStorage.getItem("pixel-perfect-visited") === "1")
-        send({ type: "pixel-perfect-return" });
-    } catch {}
+    
   }
   function language(next: Language, manual = true) {
     if (next === langRef.current) return;
@@ -111,9 +108,7 @@ export default function FlashHuntExperience({
         setRevealed(true);
         setComplete(true);
         window.scrollTo(0, 0);
-        try {
-          localStorage.setItem("pixel-perfect-visited", "1");
-        } catch {}
+        
       }
       if (
         d.type === "pixel-perfect-height" &&
