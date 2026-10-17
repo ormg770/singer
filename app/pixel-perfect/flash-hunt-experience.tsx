@@ -30,6 +30,12 @@ export default function FlashHuntExperience({
       location.origin,
     );
   }, []);
+  const notifyFlash = useCallback((active: boolean) => {
+    frame.current?.contentWindow?.postMessage(
+      { type: "pixel-perfect-cover-flash", active },
+      location.origin,
+    );
+  }, []);
   const [lang, setLang] = useState<Language>(initialLang),
     [revealed, setRevealed] = useState(false),
     [complete, setComplete] = useState(false),
@@ -190,6 +196,7 @@ export default function FlashHuntExperience({
       reward={reward}
       onReplay={replay}
       onEffects={notifyEffects}
+      onFlash={notifyFlash}
       effectsEnabled={effectsChoice}
       onEffectsChange={setEffectsChoice}
     />
