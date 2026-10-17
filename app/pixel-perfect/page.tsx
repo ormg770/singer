@@ -1,4 +1,6 @@
 import type { Metadata, Viewport } from "next";
+import { cookies, headers } from "next/headers";
+import { acceptedLanguage } from "@/lib/pixel-perfect-language";
 import FlashHuntExperience from "./flash-hunt-experience";
 
 export const viewport: Viewport = { viewportFit: "cover" };
@@ -6,7 +8,7 @@ export const viewport: Viewport = { viewportFit: "cover" };
 export const metadata: Metadata = {
   title: "Pixel Perfect — Diana Mae",
   description:
-    "A new era. Pixel Perfect by Diana Mae. Out October 26, 2026. Pre-save now.",
+    "A new era. Pixel Perfect by Diana Mae. Out October 26, 2026. Pre-save now. Nuevo sencillo.",
   alternates: { canonical: "https://dianamae.com/pixel-perfect" },
   openGraph: {
     title: "Pixel Perfect — Diana Mae",
@@ -27,6 +29,11 @@ export const metadata: Metadata = {
   },
 };
 
-export default function PixelPerfectPage() {
-  return <FlashHuntExperience />;
+export default async function PixelPerfectPage() {
+  const saved = (await cookies()).get("pixel-perfect-lang")?.value;
+  const initialLang =
+    saved === "es" || saved === "en"
+      ? saved
+      : acceptedLanguage((await headers()).get("accept-language"));
+  return <FlashHuntExperience initialLang={initialLang} />;
 }

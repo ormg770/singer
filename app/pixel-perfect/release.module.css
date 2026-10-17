@@ -1021,3 +1021,137 @@
     animation: none !important;
   }
 }
+
+/* Reveal underneath the persistent game frame; no audio remount. */
+.page[data-revealed="false"] > :not(.keepsakeSlot) {
+  visibility: hidden;
+}
+.page[data-revealed="true"] .title,
+.page[data-revealed="true"] .artwork,
+.page[data-revealed="true"] .copy > .ctaGlow {
+  animation: release-enter 0.5s both;
+}
+.page[data-revealed="true"] .artwork {
+  animation-delay: 0.1s;
+}
+.page[data-revealed="true"] .copy > .ctaGlow {
+  animation-delay: 0.2s;
+}
+@keyframes release-enter {
+  from {
+    opacity: 0;
+    translate: 0 12px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+.language {
+  display: flex;
+  gap: 2px;
+}
+.language button,
+.playAgain {
+  min-width: 44px;
+  min-height: 44px;
+  color: var(--muted);
+  background: none;
+  border: 1px solid transparent;
+  font: 12px monospace;
+  cursor: pointer;
+}
+.language button[aria-pressed="true"] {
+  border-color: #ff68bc70;
+  color: #fff;
+}
+.language button:focus-visible,
+.playAgain:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+.header {
+  flex-wrap: wrap;
+}
+.playAgain {
+  padding: 8px;
+}
+.artNote,
+.effectsToggle {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+}
+.frameTop {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 8px;
+}
+.frameTop > span:first-child {
+  flex: 1;
+  min-width: 0;
+  font-size: clamp(8px, 2vw, 11px);
+}
+.frameTop > span {
+  white-space: nowrap;
+}
+.sticker {
+  background: #e481bb;
+}
+.cta > span:first-child {
+  min-width: 0;
+  white-space: normal;
+  text-wrap: balance;
+}
+.countdown span {
+  font-size: clamp(8px, 2vw, 12px);
+  letter-spacing: 0.02em;
+}
+.frameBottom {
+  min-height: 44px;
+}
+.frameBottom > span {
+  white-space: normal;
+}
+.cameraCaption {
+  flex-wrap: wrap;
+}
+.keepsakeSlot {
+  width: 100%;
+}
+@media (max-width: 760px) {
+  .header {
+    gap: 6px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+  }
+  .headerNote {
+    display: none;
+  }
+  .wordmark {
+    font-size: 20px;
+  }
+  .back {
+    font-size: 11px;
+  }
+  .playAgain {
+    font-size: 11px;
+  }
+  .frameTop > span:first-child {
+    flex-basis: auto;
+  }
+  .cta {
+    font-size: 14px;
+  }
+  .hero {
+    gap: 32px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .page[data-revealed="true"] .title,
+  .page[data-revealed="true"] .artwork,
+  .page[data-revealed="true"] .copy > .ctaGlow {
+    animation: release-enter 0.2s both;
+    animation-delay: 0s;
+  }
+}

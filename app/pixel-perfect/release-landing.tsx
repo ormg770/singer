@@ -6,6 +6,8 @@ import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { ArrowUpRight, ArrowDown, Camera, Sparkles } from "lucide-react";
 import { track } from "@vercel/analytics";
 import { getCountdown, PRE_SAVE_URL, RELEASE_AT } from "@/lib/pixel-perfect";
+import type { ReactNode } from "react";
+import { copy, type Language } from "@/lib/pixel-perfect-language";
 import styles from "./release.module.css";
 
 const subscribeMotion = (notify: () => void) => {
@@ -27,19 +29,41 @@ function BorderLight() {
   );
 }
 
-export default function ReleaseLanding() {
+export default function ReleaseLanding({
+  lang,
+  onLanguage,
+  revealed,
+  complete,
+  reward,
+  onReplay,
+  onEffects,
+  effectsEnabled,
+  onEffectsChange,
+}: {
+  lang: Language;
+  onLanguage: (lang: Language) => void;
+  revealed: boolean;
+  complete: boolean;
+  reward: ReactNode;
+  onReplay: () => void;
+  onEffects: (enabled: boolean) => void;
+  effectsEnabled: boolean;
+  onEffectsChange: (enabled: boolean) => void;
+}) {
+  const t = copy[lang];
   const [countdown, setCountdown] = useState<ReturnType<
     typeof getCountdown
   > | null>(null);
   const [stickyVisible, setStickyVisible] = useState(true);
   const [photos, setPhotos] = useState(0);
-  const [effectsEnabled, setEffectsEnabled] = useState(true);
+
   const reducedMotion = useSyncExternalStore(
     subscribeMotion,
     getReducedMotion,
     serverReducedMotion,
   );
   const effects = effectsEnabled && !reducedMotion;
+  useEffect(() => onEffects(effects), [effects, onEffects]);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const ctaRef = useRef<HTMLAnchorElement>(null);
   const sceneRef = useRef<HTMLDivElement>(null);
@@ -232,43 +256,60 @@ export default function ReleaseLanding() {
   function trackClick(location: "hero" | "sticky") {
     try {
       track("presave_click", {
-        release: "pixel-perfect",
+        lang,
         location,
-        placement: location === "hero" ? "release-hero" : "release-sticky",
-        destination: PRE_SAVE_URL,
       });
     } catch {
       /* Analytics must never prevent navigation. */
     }
   }
 
-  const ctaLabel = countdown?.released
-    ? "LISTEN NOW"
-    : "PRE-SAVE PIXEL PERFECT";
+  const ctaLabel = countdown?.released ? t.listen : t.presave;
   return (
-    <main className={styles.page} data-effects={effects ? "on" : "off"}>
+    <main
+      className={styles.page}
+      data-effects={effects ? "on" : "off"}
+      data-revealed={revealed}
+      lang={lang}
+    >
       <a className={styles.skip} href="#release">
-        Skip to release
+        {t.skipRelease}
       </a>
-      <header className={styles.header}>
-        <Link href="/" className={styles.wordmark} aria-label="Diana Mae home">
+      <header className={styles.header} inert={!complete}>
+        <Link href="/" className={styles.wordmark} aria-label={t.home}>
           DIANA MAE<span aria-hidden="true">®</span>
         </Link>
         <span className={styles.headerNote}>
-          <span aria-hidden="true" /> THE NEXT CHAPTER
+          <span aria-hidden="true" /> {t.chapter}
         </span>
         <Link href="/" className={styles.back}>
-          Official site <ArrowUpRight size={16} aria-hidden="true" />
+          {t.official} <ArrowUpRight size={16} aria-hidden="true" />
         </Link>
+        <div className={styles.language} role="group" aria-label={t.langLabel}>
+          {(["es", "en"] as const).map((value) => (
+            <button
+              key={value}
+              type="button"
+              aria-pressed={lang === value}
+              onClick={() => onLanguage(value)}
+            >
+              {value.toUpperCase()}
+            </button>
+          ))}
+        </div>
+        <button className={styles.playAgain} type="button" onClick={onReplay}>
+          {t.again}
+        </button>
       </header>
       <section
         id="release"
         className={styles.hero}
+        inert={!complete}
         aria-labelledby="release-title"
       >
         <div className={styles.copy}>
           <p className={styles.eyebrow}>
-            <Sparkles size={15} aria-hidden="true" /> NEW SINGLE / 001
+            <Sparkles size={15} aria-hidden="true" /> {t.single}
           </p>
           <h1 ref={titleRef} id="release-title" className={styles.title}>
             PIXEL
@@ -284,34 +325,32 @@ export default function ReleaseLanding() {
             </span>
           </h1>
           <p className={styles.description}>
-            A new era. A little more electric.
+            {t.description}
             <br />
-            Be the first to hear it.
+            {t.first}
           </p>
           <div className={styles.releaseDate}>
             <span className={styles.dot} aria-hidden="true" />
-            <time dateTime={RELEASE_AT}>OCTOBER 26, 2026</time>
+            <time dateTime={RELEASE_AT}>{t.date}</time>
             <span className={styles.dateRule} aria-hidden="true" />
           </div>
           <div
             className={styles.countdown}
             role="timer"
             aria-live="off"
-            aria-label="Release: October 26, 2026, midnight UTC minus four"
+            aria-label={t.timerLabel}
           >
             {(["days", "hours", "minutes", "seconds"] as const).map((unit) => (
               <div key={unit}>
                 <strong>
                   {countdown ? String(countdown[unit]).padStart(2, "0") : "––"}
                 </strong>
-                <span>{unit}</span>
+                <span>{t[unit]}</span>
               </div>
             ))}
           </div>
           <p className={styles.status} role="status">
-            {countdown?.released
-              ? "The wait is over. Pixel Perfect is here."
-              : "COUNTING DOWN TO A NEW FREQUENCY"}
+            {countdown?.released ? t.released : t.counting}
           </p>
           <div className={styles.ctaGlow}>
             <BorderLight />
@@ -326,13 +365,11 @@ export default function ReleaseLanding() {
             >
               <span>{ctaLabel}</span>
               <ArrowUpRight size={23} aria-hidden="true" />
-              <span className={styles.srOnly}> (opens in a new tab)</span>
+              <span className={styles.srOnly}>{t.newTab}</span>
             </a>
           </div>
           <p className={styles.ctaNote}>
-            {countdown?.released
-              ? "Choose your music service."
-              : "Pre-save now. Yours on release day."}
+            {countdown?.released ? t.listenNote : t.note}
           </p>
         </div>
         <figure className={styles.artwork}>
@@ -357,7 +394,7 @@ export default function ReleaseLanding() {
               <div className={styles.photoArea}>
                 <Image
                   src="/pixel-perfect-cover-v2.jpg"
-                  alt="Official cover artwork for Pixel Perfect by Diana Mae"
+                  alt={t.coverAlt}
                   width={3000}
                   height={3000}
                   priority
@@ -368,7 +405,7 @@ export default function ReleaseLanding() {
                   type="button"
                   onClick={takePhoto}
                   className={styles.shutter}
-                  aria-label="Take a paparazzi photo of the cover"
+                  aria-label={t.coverShot}
                   aria-describedby="camera-help"
                 >
                   <span
@@ -384,8 +421,7 @@ export default function ReleaseLanding() {
                 </button>
               </div>
               <div className={styles.frameBottom}>
-                <span>NEW SINGLE</span>
-                <span>DIGITAL DREAMS, REAL FEELINGS</span>
+                <span>{t.digital}</span>
               </div>
             </div>
             <span className={styles.sticker} aria-hidden="true">
@@ -396,46 +432,43 @@ export default function ReleaseLanding() {
           </div>
           <figcaption className={styles.cameraCaption}>
             <span id="camera-help">
-              <Camera size={15} aria-hidden="true" /> TAP THE COVER. TAKE YOUR
-              SHOT.
+              <Camera size={15} aria-hidden="true" /> {t.tap}
             </span>
             <span role="status" aria-live="polite" aria-atomic="true">
-              FOTO {String(photos).padStart(2, "0")}
+              {t.photo} {String(photos).padStart(2, "0")}
             </span>
           </figcaption>
           <div className={styles.artControls}>
             <a href="#presave" className={styles.artNote}>
-              Your next obsession <ArrowDown size={15} aria-hidden="true" />
+              {t.obsession} <ArrowDown size={15} aria-hidden="true" />
             </a>
             <button
               type="button"
               className={styles.effectsToggle}
               aria-pressed={effects}
               disabled={reducedMotion}
-              onClick={() => setEffectsEnabled((value) => !value)}
+              onClick={() => onEffectsChange(!effectsEnabled)}
             >
-              {effects ? "Effects: on" : "Effects: off"}
+              {effects ? t.effectsOn : t.effectsOff}
             </button>
           </div>
         </figure>
       </section>
       <div className={styles.ticker} aria-hidden="true">
-        <span ref={tickerRef}>
-          PIXEL PERFECT ✦ COMING OCTOBER 26 ✦ A NEW ERA ✦ PIXEL PERFECT ✦ COMING
-          OCTOBER 26 ✦ A NEW ERA ✦
-        </span>
+        <span ref={tickerRef}>{t.ticker.repeat(2)}</span>
       </div>
-      <footer className={styles.footer}>
+      <div className={styles.keepsakeSlot}>{reward}</div>
+      <footer className={styles.footer} inert={!complete}>
         <span>© {new Date().getUTCFullYear()} DIANA MAE</span>
         <span>
-          MADE OF MUSIC & A LITTLE MAGIC <span aria-hidden="true">✦</span>
+          {t.footer} <span aria-hidden="true">✦</span>
         </span>
         <Link href="/">
           DIANAMAE.COM <ArrowUpRight size={14} aria-hidden="true" />
         </Link>
       </footer>
-      {stickyVisible && (
-        <aside className={styles.stickyBar} aria-label="Release shortcut">
+      {complete && stickyVisible && (
+        <aside className={styles.stickyBar} aria-label={t.shortcut}>
           <div className={styles.ctaGlow}>
             <BorderLight />
             <a
@@ -447,7 +480,7 @@ export default function ReleaseLanding() {
             >
               <span>{ctaLabel}</span>
               <ArrowUpRight size={21} aria-hidden="true" />
-              <span className={styles.srOnly}> (opens in a new tab)</span>
+              <span className={styles.srOnly}>{t.newTab}</span>
             </a>
           </div>
         </aside>
